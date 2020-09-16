@@ -431,14 +431,14 @@ struct XYZEval {
   FI void set(const T px, const T py, const T pz, const T pi)                              { x = px; y = py; z = pz; i = pi; }
   FI void set(const T px, const T py, const T pz, const T pi, const T pj)                  { x = px; y = py; z = pz; i = pi; j = pj; }
   FI void set(const T px, const T py, const T pz, const T pi, const T pj, const T pk)      { x = px; y = py; z = pz; i = pi; j = pj; k = pk; }
-  FI void set(const T px, const T py, const T pz, const T pi, const T pj, const T pk, const T pe) { x = px; y = py; z = pz; e = pe; }
+  FI void set(const T px, const T py, const T pz, const T pi, const T pj, const T pk, const T pe) { x = px; y = py; z = pz; i = pi; j = pj; k = pk; e = pe; }
   FI void set(const XYval<T> pxy)                             { x = pxy.x;  y = pxy.y;                         }
   FI void set(const XYval<T> pxy, const T pz)                 { x = pxy.x;  y = pxy.y;  z = pz;                }
+  FI void set(const XYval<T> pxy, const T pz, const T pi)     { x = pxy.x;  y = pxy.y;  z = pz; i = pi; }
+  FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj) { x = pxy.x;  y = pxy.y;  z = pz; i = pi; j = pj; }
+  FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pk) { x = pxy.x;  y = pxy.y;  z = pz; i = pi; j = pj; k = pk; }
   FI void set(const XYZval<T> pxyz)                           { x = pxyz.x; y = pxyz.y; z = pxyz.z; i = pxyz.i; j = pxyz.j; k = pxyz.k; }
-  FI void set(const XYval<T> pxy, const T pz, const T pe) { x = pxy.x;  y = pxy.y;  z = pz; e = pe; }
-  FI void set(const XYval<T> pxy, const T pz, const T pi, const T pe) { x = pxy.x;  y = pxy.y;  z = pz; i = pi.i; e = pe; }
-  FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pe) { x = pxy.x;  y = pxy.y;  z = pz; i = pi.i; j = pj.j; e = pe; }
-  FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pk, const T pe) { x = pxy.x;  y = pxy.y;  z = pz; i = pi.i; j = pj.j; k = pk.k; e = pe; }
+  FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pk, const T pe) { x = pxy.x;  y = pxy.y;  z = pz; i = pi.i; j = pj.j; ; k = pk.k; e = pe; }
   FI void set(const XYval<T> pxy, const T pi, const T pj, const T pk, const XYval<T> pze)         { x = pxy.x;  y = pxy.y;  z = pze.z; i = pi.i; j = pj.j; k = pk.k; e = pze.e; }
   FI void set(const XYZval<T> pxyz, const T pe)               { x = pxyz.x; y = pxyz.y; z = pxyz.z; i = pxyz.i; j = pxyz.j; k = pxyz.k; e = pe; }
   FI XYZEval<T>          copy()                   const { XYZval<T> o = *this; return o; }
