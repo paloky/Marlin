@@ -411,7 +411,7 @@
   #elif AXIS6_NAME == 'W'
     #define AXIS6_STR "W"
   #else
-    #define AXIS6_STR "J"
+    #define AXIS6_STR "K"
   #endif
 #else
   #define AXIS6_STR ""
