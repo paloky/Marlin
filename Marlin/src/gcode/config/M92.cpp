@@ -90,9 +90,6 @@ void GcodeSuite::M92() {
       }
       else {
         planner.settings.axis_steps_per_mm[i] = parser.value_per_axis_units((AxisEnum)i);
-        #if LINEAR_AXES >= 4 // FIXME (DerAndere): Work around issue that actual internal steps_per_mm for the I_AXIS is only a quater of the STEPS_PER_UNIT
-          //if (i == 3) planner.settings.axis_steps_per_mm[i] *= 4.0f;
-        #endif
       }
     }
   }
