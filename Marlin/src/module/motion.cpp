@@ -245,7 +245,7 @@ void report_real_position() {
   npos.y = cartes.y;
   npos.z = cartes.z;
   #if LINEAR_AXES >= 4
-    npos.i = planner.get_axis_position_mm(I_AXIS) * 4.0;  // FIXME (DerAndere): Multiplication by 4.0 is a work-around for issue with wrong internal steps per mm
+    npos.i = planner.get_axis_position_mm(I_AXIS);
   #endif
   #if LINEAR_AXES >= 5
     npos.j = planner.get_axis_position_mm(J_AXIS);
