@@ -152,7 +152,7 @@ const feedRate_t homing_feedrate_mm_s[LINEAR_AXES] PROGMEM = {
   #endif
   MMM_TO_MMS(HOMING_FEEDRATE_Z)
   #if LINEAR_AXES >= 4
-    , MMM_TO_MMS(HOMING_FEEDRATE_I) // FIXME (DerAndere): Multiply with 4 as work-around for issue with internal feedrate
+    , MMM_TO_MMS(HOMING_FEEDRATE_I)
   #endif
   #if LINEAR_AXES >= 5
     , MMM_TO_MMS(HOMING_FEEDRATE_J)

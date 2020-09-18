@@ -752,7 +752,7 @@ void MarlinSettings::postprocess() {
     // Unified Bed Leveling
     //
     {
-      _FIELD_TEST(planner_leveling_active);
+      _FIELD_TEST(planner_leveling_active); // FIXME (DerAndere): Too much data written to EEPROM since last _FIELD_TEST() causes Error: Field planner_leveling_active mismatch
       const bool ubl_active = TERN(AUTO_BED_LEVELING_UBL, planner.leveling_active, false);
       const int8_t storage_slot = TERN(AUTO_BED_LEVELING_UBL, ubl.storage_slot, -1);
       EEPROM_WRITE(ubl_active);
@@ -1648,7 +1648,7 @@ void MarlinSettings::postprocess() {
       // Unified Bed Leveling active state
       //
       {
-        _FIELD_TEST(planner_leveling_active);
+        _FIELD_TEST(planner_leveling_active); // FIXME (DerAndere): Too much data written to EEPROM since last _FIELD_TEST() causes Error: Field planner_leveling_active mismatch
         #if ENABLED(AUTO_BED_LEVELING_UBL)
           const bool &planner_leveling_active = planner.leveling_active;
           const int8_t &ubl_storage_slot = ubl.storage_slot;

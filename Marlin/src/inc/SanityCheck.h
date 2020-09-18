@@ -1186,10 +1186,6 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
   #error "Please enable only one of DELTA, MORGAN_SCARA, COREXY, COREYX, COREXZ, COREZX, COREYZ, COREZY, ASYNC_SECONDARY_AXES or FOAMCUTTER_XYUV."
 #endif
 
-#if LINEAR_AXES >= 5
-  #error "LINEAR AXES >= 5 not yet supported, it causes unsafe movements. Developers should have a kill switch installed to stop movement before removing this check."
-#endif
-  
 /**
  * Delta requirements
  */
