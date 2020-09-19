@@ -154,8 +154,8 @@
 #pragma pack(push, 1) // No padding between variables
 typedef struct { uint16_t LIST_N(LINEAR_AXES, X, Y, Z, I, J, K), X2, Y2, Z2, Z3, Z4, E0, E1, E2, E3, E4, E5, E6, E7; } tmc_stepper_current_t;
 typedef struct { uint32_t LIST_N(LINEAR_AXES, X, Y, Z, I, J, K), X2, Y2, Z2, Z3, Z4, E0, E1, E2, E3, E4, E5, E6, E7; } tmc_hybrid_threshold_t;
-typedef struct {  int16_t X, Y, Z, X2;                                     } tmc_sgt_t; // TODO: Add support for LINEAR_AXES >= 4
-typedef struct {     bool LIST_N(LINEAR_AXES, X, Y, Z, I, J, K), X2, Y2, Z2, Z3, Z4, E0, E1, E2, E3, E4, E5, E6, E7; } tmc_stealth_enabled_t;
+typedef struct { int16_t X, Y, Z, X2;                                     } tmc_sgt_t; // TODO: Add support for LINEAR_AXES >= 4
+typedef struct { bool LIST_N(LINEAR_AXES, X, Y, Z, I, J, K), X2, Y2, Z2, Z3, Z4, E0, E1, E2, E3, E4, E5, E6, E7; } tmc_stealth_enabled_t;
 
 // Limit an index to an array size
 #define ALIM(I,ARR) _MIN(I, (signed)COUNT(ARR) - 1)
@@ -716,7 +716,7 @@ void MarlinSettings::postprocess() {
         EEPROM_WRITE(planner.bed_level_matrix);
       #else
         dummyf = 0;
-        for (uint8_t q = 9; q--;) EEPROM_WRITE(dummyf);
+        for (uint8_t q = LINEAR_AXES * 3; q--;) EEPROM_WRITE(dummyf);
       #endif
     }
 
@@ -752,7 +752,7 @@ void MarlinSettings::postprocess() {
     // Unified Bed Leveling
     //
     {
-      _FIELD_TEST(planner_leveling_active); // FIXME (DerAndere): Too much data written to EEPROM since last _FIELD_TEST() causes Error: Field planner_leveling_active mismatch
+      _FIELD_TEST(planner_leveling_active);
       const bool ubl_active = TERN(AUTO_BED_LEVELING_UBL, planner.leveling_active, false);
       const int8_t storage_slot = TERN(AUTO_BED_LEVELING_UBL, ubl.storage_slot, -1);
       EEPROM_WRITE(ubl_active);
@@ -1511,7 +1511,7 @@ void MarlinSettings::postprocess() {
             EEPROM_READ(dummyf);
           #endif
         #else
-          for (uint8_t q = 4; q--;) EEPROM_READ(dummyf);
+          for (uint8_t q = NUM_AXIS; q--;) EEPROM_READ(dummyf);
         #endif
 
         EEPROM_READ(TERN(CLASSIC_JERK, dummyf, planner.junction_deviation_mm));
@@ -1615,7 +1615,7 @@ void MarlinSettings::postprocess() {
         #if ABL_PLANAR
           EEPROM_READ(planner.bed_level_matrix);
         #else
-          for (uint8_t q = 9; q--;) EEPROM_READ(dummyf);
+          for (uint8_t q = LINEAR_AXES * 3; q--;) EEPROM_READ(dummyf);
         #endif
       }
 
@@ -1648,7 +1648,7 @@ void MarlinSettings::postprocess() {
       // Unified Bed Leveling active state
       //
       {
-        _FIELD_TEST(planner_leveling_active); // FIXME (DerAndere): Too much data written to EEPROM since last _FIELD_TEST() causes Error: Field planner_leveling_active mismatch
+        _FIELD_TEST(planner_leveling_active);
         #if ENABLED(AUTO_BED_LEVELING_UBL)
           const bool &planner_leveling_active = planner.leveling_active;
           const int8_t &ubl_storage_slot = ubl.storage_slot;
@@ -2236,7 +2236,7 @@ void MarlinSettings::postprocess() {
           const xyz_float_t &backlash_distance_mm = backlash.distance_mm;
           const uint8_t &backlash_correction = backlash.correction;
         #else
-          float backlash_distance_mm[XYZ];
+          xyz_float_t backlash_distance_mm;
           uint8_t backlash_correction;
         #endif
         #if ENABLED(BACKLASH_GCODE) && defined(BACKLASH_SMOOTHING_MM)
