@@ -1511,7 +1511,7 @@ void MarlinSettings::postprocess() {
             EEPROM_READ(dummyf);
           #endif
         #else
-          for (uint8_t q = 4; q--;) EEPROM_READ(dummyf);
+          for (uint8_t q = NUM_AXIS; q--;) EEPROM_READ(dummyf);
         #endif
 
         EEPROM_READ(TERN(CLASSIC_JERK, dummyf, planner.junction_deviation_mm));
