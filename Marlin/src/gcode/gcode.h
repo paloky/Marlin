@@ -301,6 +301,10 @@
   #include "../feature/encoder_i2c.h"
 #endif
 
+#if IS_SCARA || defined(G0_FEEDRATE)
+  #define HAS_FAST_MOVES 1
+#endif
+
 enum AxisRelative : uint8_t {
   LIST_N(LINEAR_AXES, REL_X, REL_Y, REL_Z, REL_I, REL_J, REL_K),
   REL_E, E_MODE_ABS, E_MODE_REL
@@ -410,11 +414,7 @@ public:
 
 private:
 
-  static void G0_G1(
-    #if IS_SCARA || defined(G0_FEEDRATE)
-      const bool fast_move=false
-    #endif
-  );
+  static void G0_G1(TERN_(HAS_FAST_MOVES, const bool fast_move=false));
 
   TERN_(ARC_SUPPORT, static void G2_G3(const bool clockwise));
 
