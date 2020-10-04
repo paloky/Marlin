@@ -92,14 +92,7 @@ void GcodeSuite::G0_G1(
       if (MIN_AUTORETRACT <= MAX_AUTORETRACT) {
         // When M209 Autoretract is enabled, convert E-only moves to firmware retract/recover moves
         if (fwretract.autoretract_enabled && parser.seen('E')
-          && !(GANG_N(LINEAR_AXES,
-                   parser.seen('X'),
-                || parser.seen('Y'),
-                || parser.seen('Z'),
-                || parser.seen(AXIS4_NAME),
-                || parser.seen(AXIS5_NAME),
-                || parser.seen(AXIS6_NAME))
-              )
+          && !parser.seen(GANG_N(LINEAR_AXES, "X", "Y", "Z", AXIS4_STR, AXIS5_STR, AXIS6_STR))
         ) {
           const float echange = destination.e - current_position.e;
           // Is this a retract or recover move?

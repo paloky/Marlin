@@ -117,7 +117,7 @@ struct measurements_t {
 #endif
 
 inline void calibration_move() {
-  do_blocking_move_to(current_position, MMM_TO_MMS(CALIBRATION_FEEDRATE_TRAVEL));
+  do_blocking_move_to((xyz_pos_t)current_position, MMM_TO_MMS(CALIBRATION_FEEDRATE_TRAVEL));
 }
 
 /**
@@ -184,7 +184,7 @@ float measuring_movement(const AxisEnum axis, const int dir, const bool stop_sta
   destination = current_position;
   for (float travel = 0; travel < limit; travel += step) {
     destination[axis] += dir * step;
-    do_blocking_move_to(destination, mms);
+    do_blocking_move_to((xyz_pos_t)destination, mms);
     planner.synchronize();
     if (read_calibration_pin() == stop_state) break;
   }
@@ -215,7 +215,7 @@ inline float measure(const AxisEnum axis, const int dir, const bool stop_state, 
   }
   // Return to starting position
   destination[axis] = start_pos;
-  do_blocking_move_to(destination, MMM_TO_MMS(CALIBRATION_FEEDRATE_TRAVEL));
+  do_blocking_move_to((xyz_pos_t)destination, MMM_TO_MMS(CALIBRATION_FEEDRATE_TRAVEL));
   return measured_pos;
 }
 
@@ -334,17 +334,17 @@ inline void probe_sides(measurements_t &m, const float uncertainty) {
 
   // The difference between the known and the measured location
   // of the calibration object is the positional error
-  m.pos_error.x = TERN0(HAS_X_CENTER, true_center.x - m.obj_center.x)
-  m.pos_error.y = TERN0(HAS_Y_CENTER, true_center.y - m.obj_center.y)
+  m.pos_error.x = TERN0(HAS_X_CENTER, true_center.x - m.obj_center.x);
+  m.pos_error.y = TERN0(HAS_Y_CENTER, true_center.y - m.obj_center.y);
   m.pos_error.z = true_center.z - m.obj_center.z;
   #if LINEAR_AXES >= 4
-    m.pos_error.i = TERN0(HAS_I_CENTER, true_center.i - m.obj_center.i)
+    m.pos_error.i = TERN0(HAS_I_CENTER, true_center.i - m.obj_center.i);
   #endif
   #if LINEAR_AXES >= 5
-    m.pos_error.j = TERN0(HAS_J_CENTER, true_center.j - m.obj_center.j)
+    m.pos_error.j = TERN0(HAS_J_CENTER, true_center.j - m.obj_center.j);
   #endif
   #if LINEAR_AXES >= 6
-    m.pos_error.k = TERN0(HAS_K_CENTER, true_center.k - m.obj_center.k)
+    m.pos_error.k = TERN0(HAS_K_CENTER, true_center.k - m.obj_center.k);
   #endif
 }
 

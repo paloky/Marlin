@@ -1193,7 +1193,7 @@ void prepare_line_to_destination() {
   current_position = destination;
 }
 
-uint8_t axes_should_home(uint8_t axis_bits/*=0x07*/) {
+uint8_t axes_should_home(uint8_t axis_bits/*=LINEAR_AXIS_MASK*/) {
   // Clear test bits that are trusted
   if (TEST(axis_bits, X_AXIS) && TEST(axis_homed, X_AXIS)) CBI(axis_bits, X_AXIS);
   if (TEST(axis_bits, Y_AXIS) && TEST(axis_homed, Y_AXIS)) CBI(axis_bits, Y_AXIS);
@@ -1201,7 +1201,7 @@ uint8_t axes_should_home(uint8_t axis_bits/*=0x07*/) {
   return axis_bits;
 }
 
-bool homing_needed_error(uint8_t axis_bits/*=0x07*/) {
+bool homing_needed_error(uint8_t axis_bits/*=LINEAR_AXIS_MASK*/) {
   if ((axis_bits = axes_should_home(axis_bits))) {
     PGM_P home_first = GET_TEXT(MSG_HOME_FIRST);
     char msg[strlen_P(home_first)+1];

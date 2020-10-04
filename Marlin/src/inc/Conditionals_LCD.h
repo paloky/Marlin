@@ -514,9 +514,7 @@
  *  E_MANUAL     - Number of E steppers for LCD move options
  */
 
-#if EXTRUDERS
-  #define HAS_EXTRUDERS 1
-#else
+#if EXTRUDERS == 0
   #undef EXTRUDERS
   #define EXTRUDERS 0
   #undef SINGLENOZZLE
@@ -627,6 +625,9 @@
 /**
  * DISTINCT_E_FACTORS affects how some E factors are accessed
  */
+#ifndef LINEAR_AXES
+  #define LINEAR_AXES 3
+#endif
 #if EXTRUDERS == 0
   #define NUM_AXIS (LINEAR_AXES)
 #else
