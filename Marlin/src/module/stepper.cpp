@@ -155,7 +155,7 @@ uint8_t Stepper::last_direction_bits, // = 0
 
 bool Stepper::abort_current_block;
 
-#if DISABLED(MIXING_EXTRUDER) && EXTRUDERS > 1
+#if DISABLED(MIXING_EXTRUDER) && HAS_MULTI_EXTRUDER
   uint8_t Stepper::last_moved_extruder = 0xFF;
 #endif
 
@@ -191,7 +191,7 @@ uint32_t Stepper::advance_divisor = 0,
          Stepper::decelerate_after,          // The count at which to start decelerating
          Stepper::step_event_count;          // The total event count for the current block
 
-#if EXTRUDERS > 1 || ENABLED(MIXING_EXTRUDER)
+#if EITHER(HAS_MULTI_EXTRUDER, MIXING_EXTRUDER)
   uint8_t Stepper::stepper_extruder;
 #else
   constexpr uint8_t Stepper::stepper_extruder;
@@ -357,11 +357,11 @@ xyze_int8_t Stepper::count_direction{0};
 #elif ENABLED(DUAL_X_CARRIAGE)
   #define X_APPLY_DIR(v,ALWAYS) do{ \
     if (extruder_duplication_enabled || ALWAYS) { X_DIR_WRITE(v); X2_DIR_WRITE(mirrored_duplication_mode ? !(v) : v); } \
-    else if (movement_extruder()) X2_DIR_WRITE(v); else X_DIR_WRITE(v); \
+    else if (last_moved_extruder) X2_DIR_WRITE(v); else X_DIR_WRITE(v); \
   }while(0)
   #define X_APPLY_STEP(v,ALWAYS) do{ \
     if (extruder_duplication_enabled || ALWAYS) { X_STEP_WRITE(v); X2_STEP_WRITE(v); } \
-    else if (movement_extruder()) X2_STEP_WRITE(v); else X_STEP_WRITE(v); \
+    else if (last_moved_extruder) X2_STEP_WRITE(v); else X_STEP_WRITE(v); \
   }while(0)
 #else
   #define X_APPLY_DIR(v,Q) X_DIR_WRITE(v)
@@ -1604,12 +1604,11 @@ void Stepper::pulse_phase_isr() {
 
         #if STEPPER_PAGE_FORMAT == SP_4x4D_128
 
-          #define PAGE_SEGMENT_UPDATE(AXIS, VALUE, MID) do{ \
-                 if ((VALUE) == MID) {}                     \
-            else if ((VALUE) <  MID) SBI(dm, _AXIS(AXIS));  \
-            else                     CBI(dm, _AXIS(AXIS));  \
-            page_step_state.sd[_AXIS(AXIS)] = VALUE;        \
-            page_step_state.bd[_AXIS(AXIS)] += VALUE;       \
+          #define PAGE_SEGMENT_UPDATE(AXIS, VALUE) do{   \
+                 if ((VALUE) <  7) SBI(dm, _AXIS(AXIS)); \
+            else if ((VALUE) >  7) CBI(dm, _AXIS(AXIS)); \
+            page_step_state.sd[_AXIS(AXIS)] = VALUE;     \
+            page_step_state.bd[_AXIS(AXIS)] += VALUE;    \
           }while(0)
 
           #define PAGE_PULSE_PREP(AXIS) do{ \
@@ -1618,7 +1617,7 @@ void Stepper::pulse_phase_isr() {
           }while(0)
 
           switch (page_step_state.segment_steps) {
-            case 8:
+            case DirectStepping::Config::SEGMENT_STEPS:
               page_step_state.segment_idx += 2;
               page_step_state.segment_steps = 0;
               // fallthru
@@ -1627,10 +1626,10 @@ void Stepper::pulse_phase_isr() {
                            high = page_step_state.page[page_step_state.segment_idx + 1];
               uint8_t dm = last_direction_bits;
 
-              PAGE_SEGMENT_UPDATE(X, low >> 4, 7);
-              PAGE_SEGMENT_UPDATE(Y, low & 0xF, 7);
-              PAGE_SEGMENT_UPDATE(Z, high >> 4, 7);
-              PAGE_SEGMENT_UPDATE(E, high & 0xF, 7);
+              PAGE_SEGMENT_UPDATE(X, low >> 4);
+              PAGE_SEGMENT_UPDATE(Y, low & 0xF);
+              PAGE_SEGMENT_UPDATE(Z, high >> 4);
+              PAGE_SEGMENT_UPDATE(E, high & 0xF);
 
               if (dm != last_direction_bits) {
                 last_direction_bits = dm;
@@ -1641,9 +1640,9 @@ void Stepper::pulse_phase_isr() {
             default: break;
           }
 
-          PAGE_PULSE_PREP(X),
-          PAGE_PULSE_PREP(Y),
-          PAGE_PULSE_PREP(Z),
+          PAGE_PULSE_PREP(X);
+          PAGE_PULSE_PREP(Y);
+          PAGE_PULSE_PREP(Z);
           PAGE_PULSE_PREP(E);
 
           page_step_state.segment_steps++;
@@ -1660,7 +1659,7 @@ void Stepper::pulse_phase_isr() {
           }while(0)
 
           switch (page_step_state.segment_steps) {
-            case 4:
+            case DirectStepping::Config::SEGMENT_STEPS:
               page_step_state.segment_idx++;
               page_step_state.segment_steps = 0;
               // fallthru
@@ -1690,7 +1689,6 @@ void Stepper::pulse_phase_isr() {
           }while(0)
 
           uint8_t steps = page_step_state.page[page_step_state.segment_idx >> 1];
-
           if (page_step_state.segment_idx & 0x1) steps >>= 4;
 
           PAGE_PULSE_PREP(X, 3);
@@ -2097,6 +2095,8 @@ uint32_t Stepper::block_phase_isr() {
           #define X_CMP(A,B) ((A)!=(B))
         #endif
         #define X_MOVE_TEST ( S_(1) != S_(2) || (S_(1) > 0 && X_CMP(D_(1),D_(2))) )
+      #elif ENABLED(MARKFORGED_XY)
+        #define X_MOVE_TEST (current_block->steps.a != current_block->steps.b)
       #else
         #define X_MOVE_TEST !!current_block->steps.a
       #endif
@@ -2194,7 +2194,7 @@ uint32_t Stepper::block_phase_isr() {
         MIXER_STEPPER_SETUP();
       #endif
 
-      #if EXTRUDERS > 1
+      #if HAS_MULTI_EXTRUDER
         stepper_extruder = current_block->extruder;
       #endif
 
@@ -2219,7 +2219,7 @@ uint32_t Stepper::block_phase_isr() {
         || TERN(MIXING_EXTRUDER, false, stepper_extruder != last_moved_extruder)
       ) {
         last_direction_bits = current_block->direction_bits;
-        #if EXTRUDERS > 1
+        #if HAS_MULTI_EXTRUDER
           last_moved_extruder = stepper_extruder;
         #endif
 
@@ -2716,6 +2716,8 @@ void Stepper::_set_position(
   #elif CORE_IS_YZ
     // coreyz planning
     count_position.set(a, b + c, CORESIGN(b - c));
+  #elif ENABLED(MARKFORGED_XY)
+    count_position.set(a - b, b, c);
   #else
     // default non-h-bot planning
     count_position.set(LIST_N(LINEAR_AXES, a, b, c, i, j, k));
@@ -2786,6 +2788,10 @@ void Stepper::endstop_triggered(const AxisEnum axis) {
         ? CORESIGN(count_position[CORE_AXIS_1] - count_position[CORE_AXIS_2])
         : count_position[CORE_AXIS_1] + count_position[CORE_AXIS_2]
       ) * double(0.5)
+    #elif ENABLED(MARKFORGED_XY)
+      axis == CORE_AXIS_1
+        ? count_position[CORE_AXIS_1] - count_position[CORE_AXIS_2]
+        : count_position[CORE_AXIS_2]
     #else // !IS_CORE
       count_position[axis]
     #endif
@@ -2815,12 +2821,12 @@ int32_t Stepper::triggered_position(const AxisEnum axis) {
 }
 
 void Stepper::report_a_position(const xyz_long_t &pos) {
-  #if CORE_IS_XY || CORE_IS_XZ || ENABLED(DELTA) || IS_SCARA
+  #if ANY(CORE_IS_XY, CORE_IS_XZ, MARKFORGED_XY, DELTA, IS_SCARA)
     SERIAL_ECHOPAIR(STR_COUNT_A, pos.x, " B:", pos.y);
   #else
     SERIAL_ECHOPAIR_P(PSTR(STR_COUNT_X), pos.x, SP_Y_LBL, pos.y);
   #endif
-  #if CORE_IS_XZ || CORE_IS_YZ || ENABLED(DELTA)
+  #if ANY(CORE_IS_XZ, CORE_IS_YZ, DELTA)
     SERIAL_ECHOLNPAIR(" C:", pos.z);
   #else
     SERIAL_ECHOPAIR_P(SP_Z_LBL, pos.z);

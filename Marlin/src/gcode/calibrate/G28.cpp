@@ -47,7 +47,7 @@
 
 #include "../../lcd/ultralcd.h"
 #if ENABLED(DWIN_CREALITY_LCD)
-  #include "../../lcd/dwin/dwin.h"
+  #include "../../lcd/dwin/e3v2/dwin.h"
 #endif
 
 #if HAS_L64XX                         // set L6470 absolute position registers to counts
@@ -118,7 +118,7 @@
     DEBUG_SECTION(log_G28, "home_z_safely", DEBUGGING(LEVELING));
 
     // Disallow Z homing if X or Y homing is needed
-    if (axis_unhomed_error(_BV(X_AXIS) | _BV(Y_AXIS))) return;
+    if (homing_needed_error(_BV(X_AXIS) | _BV(Y_AXIS))) return;
 
     sync_plan_position();
 
@@ -192,7 +192,6 @@
  *  X   Home to the X endstop
  *  Y   Home to the Y endstop
  *  Z   Home to the Z endstop
- *
  */
 void GcodeSuite::G28() {
   DEBUG_SECTION(log_G28, "G28", DEBUGGING(LEVELING));
@@ -298,7 +297,7 @@ void GcodeSuite::G28() {
 
   #else // NOT DELTA
 
-    #define _UNSAFE(A) (homeZ && TERN0(Z_SAFE_HOMING, axes_need_homing(_BV(A##_AXIS))))
+    #define _UNSAFE(A) (homeZ && TERN0(Z_SAFE_HOMING, axes_should_home(_BV(A##_AXIS))))
 
     const bool homeZ = parser.seen('Z'),
                // Other axes should be homed before Z safe-homing
@@ -318,10 +317,10 @@ void GcodeSuite::G28() {
                #endif
                #if LINEAR_AXES >= 5
                  homeJ = needJ || parser.seen(AXIS5_NAME),
-              #endif
-              #if LINEAR_AXES >= 6
+               #endif
+               #if LINEAR_AXES >= 6
                  homeK = needK || parser.seen(AXIS6_NAME),
-              #endif
+               #endif
                // Home-all if all or none are flagged
                home_all = true GANG_N(LINEAR_AXES,
                  && homeX == homeX,
@@ -353,7 +352,7 @@ void GcodeSuite::G28() {
         ? 0
         : (parser.seenval('R') ? parser.value_linear_units() : Z_HOMING_HEIGHT);
 
-    if (z_homing_height && (doX || doY 
+    if (z_homing_height && (doX || doY
       #if LINEAR_AXES >= 4
         || doI
       #endif
