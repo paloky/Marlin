@@ -168,7 +168,7 @@
  *
  * :[3, 4, 5, 6]
  */
-#define LINEAR_AXES 3
+//#define LINEAR_AXES 3
 
 /**
  * Axis codes for additional axes:
@@ -676,7 +676,7 @@
 #define USE_XMIN_PLUG
 #define USE_YMIN_PLUG
 #define USE_ZMIN_PLUG
-#define USE_IMIN_PLUG
+//#define USE_IMIN_PLUG
 //#define USE_JMIN_PLUG
 //#define USE_KMIN_PLUG
 //#define USE_XMAX_PLUG

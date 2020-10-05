@@ -234,6 +234,18 @@
     memcpy(&a[0],&b[0],_MIN(sizeof(a),sizeof(b))); \
   }while(0)
 
+#define CODE_9( A,B,C,D,E,F,G,H,I,...) do{ A; B; C; D; E; F; G; H; I; }while(0)
+#define CODE_8( A,B,C,D,E,F,G,H,...) do{ A; B; C; D; E; F; G; H; }while(0)
+#define CODE_7( A,B,C,D,E,F,G,...) do{ A; B; C; D; E; F; G; }while(0)
+#define CODE_6( A,B,C,D,E,F,...) do{ A; B; C; D; E; F; }while(0)
+#define CODE_5( A,B,C,D,E,...) do{ A; B; C; D; E; }while(0)
+#define CODE_4( A,B,C,D,...) do{ A; B; C; D; }while(0)
+#define CODE_3( A,B,C,...) do{ A; B; C; }while(0)
+#define CODE_2( A,B,...) do{ A; B; }while(0)
+#define CODE_1( A,...) do{ A; }while(0)
+#define _CODE_N(N,V...) CODE_##N(V)
+#define CODE_N(N,V...) _CODE_N(N,V)
+
 #define GANG_9( A,B,C,D,E,F,G,H,I,...) A B C D E F G H I
 #define GANG_8( A,B,C,D,E,F,G,H,...) A B C D E F G H
 #define GANG_7( A,B,C,D,E,F,G,...) A B C D E F G
@@ -267,7 +279,9 @@
 
 #define _LIST_N(N,V...) LIST_##N(V)
 #define LIST_N(N,V...) _LIST_N(N,V)
+#define LIST_N_1(N,K) _LIST_N(N,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K,K)
 #define ARRAY_N(N,V...) { _LIST_N(N,V) }
+#define ARRAY_N_1(N,K)  { LIST_N_1(N,K) }
 
 #define _JOIN_1(O)         (O)
 #define JOIN_N(N,C,V...)   (DO(JOIN,C,LIST_N(N,V)))

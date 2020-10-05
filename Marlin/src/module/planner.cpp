@@ -1774,7 +1774,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
   const int32_t da = target.a - position.a,
                 db = target.b - position.b,
                 dc = target.c - position.c;
-  #if LINEAR_AXES >= 4 
+  #if LINEAR_AXES >= 4
     const int32_t di = target.i - position.i;
   #endif
   #if LINEAR_AXES >= 5
@@ -1783,7 +1783,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
   #if LINEAR_AXES >= 6
     const int32_t dk = target.k - position.k;
   #endif
-  
+
   #if EXTRUDERS
     int32_t de = target.e - position.e;
   #else
@@ -2030,22 +2030,22 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
           // XYZ vector magnitude. If one of the secondary axes IJK moves further
           // than the XYZ vector magnitude, take the largest single-axis move, instead.
           #if LINEAR_AXES == 6
-            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z) 
+            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
               > _MAX(sq(steps_dist_mm.i), sq(steps_dist_mm.j), sq(steps_dist_mm.k))
               ? sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
               : _MAX(sq(steps_dist_mm.i), sq(steps_dist_mm.j), sq(steps_dist_mm.k))
           #elif LINEAR_AXES == 5
-            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z) 
+            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
               > _MAX(sq(steps_dist_mm.i), sq(steps_dist_mm.j))
               ? sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
               : _MAX(sq(steps_dist_mm.i), sq(steps_dist_mm.j))
           #elif LINEAR_AXES == 4
-            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z) 
+            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
               > sq(steps_dist_mm.i)
               ? sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
               : sq(steps_dist_mm.i)
           #else
-            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z) 
+            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
           #endif
 
         #elif defined(FOAMCUTTER_XYUV)
@@ -2525,7 +2525,7 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
       // Compute cosine of angle between previous and current path. (prev_unit_vec is negative)
       // NOTE: Max junction velocity is computed without sin() or acos() by trig half angle identity.
       float junction_cos_theta = (-prev_unit_vec.x * unit_vec.x) + (-prev_unit_vec.y * unit_vec.y)
-                               + (-prev_unit_vec.z * unit_vec.z) 
+                               + (-prev_unit_vec.z * unit_vec.z)
                                #if LINEAR_AXES >= 4
                                  + (-prev_unit_vec.i * unit_vec.i)
                                #endif
@@ -2879,7 +2879,7 @@ bool Planner::buffer_segment(const float &a, const float &b, const float &c
       int32_t(LROUND(i * settings.axis_steps_per_mm[I_AXIS])), // FIXME (DerAndere): Multiplication by 4.0 is a work-around for issue with wrong internal steps per mm
       int32_t(LROUND(j * settings.axis_steps_per_mm[J_AXIS])),
       int32_t(LROUND(k * settings.axis_steps_per_mm[K_AXIS]))
-    ),   
+    ),
     int32_t(LROUND(e * settings.axis_steps_per_mm[E_AXIS_N(extruder)]))
   };
 
@@ -3237,7 +3237,7 @@ void Planner::set_max_feedrate(const uint8_t axis, float targetValue) {
     #endif
     limit_and_warn(targetValue, axis, PSTR("Feedrate"), max_fr_edit_scaled);
   #endif
-  
+
   settings.max_feedrate_mm_s[axis] = targetValue;
 }
 

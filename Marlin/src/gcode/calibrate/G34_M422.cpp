@@ -146,7 +146,7 @@ void GcodeSuite::G34() {
     // This hack is un-done at the end of G34 - either by re-homing, or by using the probed heights of the last iteration.
 
     #if DISABLED(Z_STEPPER_ALIGN_KNOWN_STEPPER_POSITIONS)
-      float last_z_align_move[NUM_Z_STEPPER_DRIVERS] = ARRAY_N(NUM_Z_STEPPER_DRIVERS, 10000.0f, 10000.0f, 10000.0f, 10000.0f);
+      float last_z_align_move[NUM_Z_STEPPER_DRIVERS] = ARRAY_N_1(NUM_Z_STEPPER_DRIVERS, 10000.0f);
     #else
       float last_z_align_level_indicator = 10000.0f;
     #endif

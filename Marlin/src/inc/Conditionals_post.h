@@ -78,9 +78,6 @@
 /**
  * Axis lengths and center
  */
-#ifndef LINEAR_AXES
-  #define LINEAR_AXES 3
-#endif
 #ifndef AXIS4_NAME
   #define AXIS4_NAME 'I'
 #endif
