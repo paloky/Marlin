@@ -204,16 +204,20 @@ float measuring_movement(const AxisEnum axis, const int dir, const bool stop_sta
 inline float measure(const AxisEnum axis, const int dir, const bool stop_state, float * const backlash_ptr, const float uncertainty) {
   const bool fast = uncertainty == CALIBRATION_MEASUREMENT_UNKNOWN;
 
-  // Save position
-  destination = current_position;
-  const float start_pos = destination[axis];
+  // Save the current position of the specified axis
+  const float start_pos = current_position[axis];
+
+  // Take a measurement. Only the specified axis will be affected.
   const float measured_pos = measuring_movement(axis, dir, stop_state, fast);
+
   // Measure backlash
   if (backlash_ptr && !fast) {
     const float release_pos = measuring_movement(axis, -dir, !stop_state, fast);
     *backlash_ptr = ABS(release_pos - measured_pos);
   }
-  // Return to starting position
+
+  // Move back to the starting position
+  destination = current_position;
   destination[axis] = start_pos;
   do_blocking_move_to((xyz_pos_t)destination, MMM_TO_MMS(CALIBRATION_FEEDRATE_TRAVEL));
   return measured_pos;
