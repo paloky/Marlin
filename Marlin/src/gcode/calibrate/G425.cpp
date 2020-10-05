@@ -393,6 +393,7 @@ inline void probe_sides(measurements_t &m, const float uncertainty) {
       #if ENABLED(CALIBRATION_MEASURE_KMAX)
         SERIAL_ECHOLNPAIR("  Kmax: ", m.obj_side[KMAXIMUM]);
       #endif
+    #endif
     SERIAL_EOL();
   }
 
