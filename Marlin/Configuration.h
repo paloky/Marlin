@@ -155,17 +155,17 @@
 //#define MACHINE_UUID "00000000-0000-0000-0000-000000000000"
 
 /**
- * This defines the number of axes that are not used for extruders (axes that
- * benefit from endstops and homing). LINEAR_AXES >= 4 requires definition of
- * [I, [J, [K]]]_STEP_PIN, [I, [J, [K]]]_ENABLE_PIN, [I, [J, [K]]]_DIR_PIN,
- * [I, [J, [K]]]_STOP_PIN, USE_[I, [J, [K]]][MIN || MAX]_PLUG,
- * [I, [J, [K]]]_[MIN || MAX]_POS, [I, [J, [K]]]_ENABLE_ON,
- * INVERT_[I, [J, [K]]]_DIR and definition of the respective values of
- * DEFAULT_AXIS_STEPS_PER_UNIT, DEFAULT_MAX_FEEDRATE,
- * DEFAULT_MAX_ACCELERATION, AXIS_RELATIVE_MODES, MICROSTEP_MODES and
- * MANUAL_FEEDRATE.
- * 
+ * Define the number of coordinated linear axes.
  * See https://github.com/DerAndere1/Marlin/wiki
+ * Each linear axis gets its own stepper control and endstop:
+ *
+ *   Steppers: *_STEP_PIN, *_ENABLE_PIN, *_DIR_PIN, *_ENABLE_ON
+ *   Endstops: *_STOP_PIN, USE_*MIN_PLUG, USE_*MAX_PLUG
+ *       Axes: *_MIN_POS, *_MAX_POS, INVERT_*_DIR
+ *    Planner: DEFAULT_AXIS_STEPS_PER_UNIT, DEFAULT_MAX_FEEDRATE
+ *             DEFAULT_MAX_ACCELERATION, AXIS_RELATIVE_MODES,
+ *             MICROSTEP_MODES, MANUAL_FEEDRATE
+ *
  * :[3, 4, 5, 6]
  */
 #define LINEAR_AXES 3
@@ -819,14 +819,14 @@
 /**
  * Default Axis Steps Per Unit (steps/mm)
  * Override with M92
- *                                      X, Y, Z, [I ,[J ,[K ,]]] E0 [, E1[, E2...]]
+ *                                      X, Y, Z [, I [, J [, K]]], E0 [, E1[, E2...]]
  */
 #define DEFAULT_AXIS_STEPS_PER_UNIT   { 80, 80, 4000, 500 }
 
 /**
  * Default Max Feed Rate (mm/s)
  * Override with M203
- *                                      X, Y, Z, [I ,[J ,[K ,]]] E0 [, E1[, E2...]]
+ *                                      X, Y, Z [, I [, J [, K]]], E0 [, E1[, E2...]]
  */
 #define DEFAULT_MAX_FEEDRATE          { 300, 300, 5, 25 }
 
@@ -839,7 +839,7 @@
  * Default Max Acceleration (change/s) change = mm/s
  * (Maximum start speed for accelerated moves)
  * Override with M201
- *                                      X, Y, Z, [I ,[J ,[K ,]]] E0 [, E1[, E2...]]
+ *                                      X, Y, Z [, I [, J [, K]]], E0 [, E1[, E2...]]
  */
 #define DEFAULT_MAX_ACCELERATION      { 3000, 3000, 100, 10000 }
 
@@ -1584,7 +1584,7 @@
  *   M501 - Read settings from EEPROM. (i.e., Throw away unsaved changes)
  *   M502 - Revert settings to "factory" defaults. (Follow with M500 to init the EEPROM.)
  */
-#define EEPROM_SETTINGS     // Persistent storage with M500 and M501
+//#define EEPROM_SETTINGS     // Persistent storage with M500 and M501
 //#define DISABLE_M503        // Saves ~2700 bytes of PROGMEM. Disable for release!
 #define EEPROM_CHITCHAT       // Give feedback on EEPROM commands. Disable to save PROGMEM.
 #define EEPROM_BOOT_SILENT    // Keep M503 quiet and only give errors during first load
