@@ -310,6 +310,7 @@ struct XYZval {
   };
   FI void set(const T px)                                                               { x = px; }
   FI void set(const T px, const T py)                                                   { x = px; y = py; }
+  FI void set(const XYval<T> pxy)                                                       { x = pxy.x; y = pxy.y; }
   FI void set(const T px, const T py, const T pz)                                       { x = px; y = py; z = pz; }
   FI void set(const XYval<T> pxy, const T pz)                                           { x = pxy.x; y = pxy.y; z = pz;}
   #if LINEAR_AXES >= 4
@@ -427,34 +428,46 @@ struct XYZEval {
   #else
     FI T magnitude() const { return (T)sqrtf(e*e GANG_N(LINEAR_AXES, + x*x, + y*y, + z*z, + i*i, + j*j, + k*k)); }
   #endif
-  FI operator T* ()                                           { return pos; }
-  FI operator bool()                                          { return e GANG_N(LINEAR_AXES, || x, || y, || z, || i, || j, || k); }
-  FI void set(const T px)                                     { x = px;               }
-  FI void set(const T px, const T py)                         { x = px;    y = py;    }
-  FI void set(const XYval<T> pxy)                             { x = pxy.x; y = pxy.y; }
-  FI void set(const T px, const T py, const T pz)             { x = px;    y = py;    z = pz; }
-  FI void set(const T px, const T py, const T pz, const T pe) { x = px;    y = py;    z = pz; e = pe;}
-  FI void set(const XYval<T> pxy, const T pz)                 { x = pxy.x; y = pxy.y; z = pz; }
+  FI operator T* ()                                             { return pos; }
+  FI operator bool()                                            { return e GANG_N(LINEAR_AXES, || x, || y, || z, || i, || j, || k); }
+  FI void set(const T px)                                       { x = px;               }
+  FI void set(const T px, const T py)                           { x = px;    y = py;    }
+  FI void set(const XYval<T> pxy)                               { x = pxy.x; y = pxy.y; }
+  #if LINEAR_AXES >= 3
+    FI void set(const T px, const T py, const T pz)               { x = px;    y = py;    z = pz; }
+    FI void set(const XYval<T> pxy, const T pz)                   { x = pxy.x; y = pxy.y; z = pz; }
+    #if LINEAR_AXES == 3
+      FI void set(const T px, const T py, const T pz, const T pe) { set(px,  py, pz   ); e = pe; }
+      FI void set(const XYval<T> pxy, const T pz, const T pe)     { set(pxy,     pz   ); e = pe; }
+      FI void set(const XYval<T> pxy, const XYval<T> pze)         { set(pxy,     pze.z); e = pze.e; }
+    #endif
+  #endif
   #if LINEAR_AXES >= 4
-    FI void set(const T px, const T py, const T pz, const T pi)                         { set(px,  py, pz); i = pi; }
-    FI void set(const XYval<T> pxy, const T pz, const T pi)                             { set(pxy,     pz); i = pi; }
-    FI void set(const T px, const T py, const T pz, const T pi, const T pe)             { set(px,  py, pz,    pi); e = pe; }
-    FI void set(const XYval<T> pxy, const T pz, const T pi, const T pe)                 { set(pxy,     pz,    pi); e = pe; }
-    FI void set(const XYval<T> pxy, const T pi, const XYval<T> pze)                     { set(pxy,     pze.z, pi); e = pze.e; }
+    FI void set(const T px, const T py, const T pz, const T pi)               { set(px,  py, pz); i = pi; }
+    FI void set(const XYval<T> pxy, const T pz, const T pi)                   { set(pxy,     pz); i = pi; }
+    #if LINEAR_AXES == 4
+      FI void set(const T px, const T py, const T pz, const T pi, const T pe) { set(px,  py, pz,    pi); e = pe; }
+      FI void set(const XYval<T> pxy, const T pz, const T pi, const T pe)     { set(pxy,     pz,    pi); e = pe; }
+      FI void set(const XYval<T> pxy, const T pi, const XYval<T> pze)         { set(pxy,     pze.z, pi); e = pze.e; }
+    #endif
   #endif
   #if LINEAR_AXES >= 5
-    FI void set(const T px, const T py, const T pz, const T pi, const T pj)             { set(px,  py, pz,    pi); j = pj; }
-    FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj)                 { set(pxy,     pz,    pi); j = pj; }
-    FI void set(const T px, const T py, const T pz, const T pi, const T pj, const T pe) { set(px,  py, pz,    pi, pj); e = pe; }
-    FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pe)     { set(pxy,     pz,    pi, pj); e = pe;}
-    FI void set(const XYval<T> pxy, const T pi, const T pj, const XYval<T> pze)         { set(pxy,     pze.z, pi, pj); e = pze.e; }
+    FI void set(const T px, const T py, const T pz, const T pi, const T pj)               { set(px,  py, pz,    pi); j = pj; }
+    FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj)                   { set(pxy,     pz,    pi); j = pj; }
+    #if LINEAR_AXES == 5
+      FI void set(const T px, const T py, const T pz, const T pi, const T pj, const T pe) { set(px,  py, pz,    pi, pj); e = pe; }
+      FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pe)     { set(pxy,     pz,    pi, pj); e = pe;}
+      FI void set(const XYval<T> pxy, const T pi, const T pj, const XYval<T> pze)         { set(pxy,     pze.z, pi, pj); e = pze.e; }
+    #endif
   #endif
   #if LINEAR_AXES >= 6
-    FI void set(const T px, const T py, const T pz, const T pi, const T pj, const T pk)             { set(px, py, pz,    pi, pj); k = pk; }
-    FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pk)                 { set(pxy,    pz,    pi, pj); k = pk; }
-    FI void set(const T px, const T py, const T pz, const T pi, const T pj, const T pk, const T pe) { set(px, py, pz,    pi, pj, pk); e = pe; }
-    FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pk, const T pe)     { set(pxy,    pz,    pi, pj, pk); e = pe; }
-    FI void set(const XYval<T> pxy, const T pi, const T pj, const T pk, const XYval<T> pze)         { set(pxy,    pze.z, pi, pj, pk); e = pze.e; }
+    FI void set(const T px, const T py, const T pz, const T pi, const T pj, const T pk)               { set(px, py, pz,    pi, pj); k = pk; }
+    FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pk)                   { set(pxy,    pz,    pi, pj); k = pk; }
+    #if LINEAR_AXES == 6
+      FI void set(const T px, const T py, const T pz, const T pi, const T pj, const T pk, const T pe) { set(px, py, pz,    pi, pj, pk); e = pe; }
+      FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pk, const T pe)     { set(pxy,    pz,    pi, pj, pk); e = pe; }
+      FI void set(const XYval<T> pxy, const T pi, const T pj, const T pk, const XYval<T> pze)         { set(pxy,    pze.z, pi, pj, pk); e = pze.e; }
+    #endif
   #endif
 
   FI void set(const XYZval<T> pxyz)             { set(LIST_N(LINEAR_AXES, pxyz.x, pxyz.y, pxyz.z, pxyz.i, pxyz.j, pxyz.k)); }
