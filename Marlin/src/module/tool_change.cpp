@@ -57,7 +57,7 @@
   uint8_t singlenozzle_fan_speed[EXTRUDERS];
 #endif
 
-#if ENABLED(MAGNETIC_PARKING_EXTRUDER) || defined(EVENT_GCODE_AFTER_TOOLCHANGE) || (ENABLED(PARKING_EXTRUDER) && PARKING_EXTRUDER_SOLENOIDS_DELAY > 0)
+#if ENABLED(MAGNETIC_PARKING_EXTRUDER) || defined(EVENT_GCODE_TOOLCHANGE_T0) || defined(EVENT_GCODE_TOOLCHANGE_T1)|| defined(EVENT_GCODE_AFTER_TOOLCHANGE) || (ENABLED(PARKING_EXTRUDER) && PARKING_EXTRUDER_SOLENOIDS_DELAY > 0)
   #include "../gcode/gcode.h"
 #endif
 
@@ -1188,6 +1188,18 @@ void tool_change(const uint8_t new_tool, bool no_move/*=false*/) {
     #endif
 
     TERN_(HAS_FANMUX, fanmux_switch(active_extruder));
+
+    #ifdef EVENT_GCODE_TOOLCHANGE_T0
+      if ((!no_move) && (new_tool == 0)) {
+        gcode.process_subcommands_now_P(PSTR(EVENT_GCODE_TOOLCHANGE_T0));
+      }
+    #endif
+
+    #ifdef EVENT_GCODE_TOOLCHANGE_T1
+      if ((!no_move) && (new_tool == 1)) {
+        gcode.process_subcommands_now_P(PSTR(EVENT_GCODE_TOOLCHANGE_T1));
+      }
+    #endif
 
     #ifdef EVENT_GCODE_AFTER_TOOLCHANGE
       if (!no_move && TERN1(DUAL_X_CARRIAGE, dual_x_carriage_mode == DXC_AUTO_PARK_MODE))
