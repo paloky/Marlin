@@ -628,14 +628,11 @@
 #ifndef LINEAR_AXES
   #define LINEAR_AXES 3
 #endif
-#if EXTRUDERS == 0
-  #define NUM_AXIS (LINEAR_AXES)
-#else
-  #define NUM_AXIS (LINEAR_AXES + 1)
-#endif
+#define NUM_AXIS (LINEAR_AXES)
 #if ENABLED(DISTINCT_E_FACTORS) && E_STEPPERS > 1
   #define DISTINCT_E E_STEPPERS
   #define XYZE_N (XYZ + E_STEPPERS)
+  #define NUM_AXIS_N (LINEAR_AXES + E_STEPPERS)
   #define E_INDEX_N(E) (E)
   #define E_AXIS_N(E) AxisEnum(E_AXIS + E)
   #define UNUSED_E(E) NOOP
@@ -643,11 +640,11 @@
   #undef DISTINCT_E_FACTORS
   #define DISTINCT_E 1
   #define XYZE_N XYZE
+  #define NUM_AXIS_N (LINEAR_AXES + 1)
   #define E_INDEX_N(E) 0
   #define E_AXIS_N(E) E_AXIS
   #define UNUSED_E(E) UNUSED(E)
 #endif
-#define NUM_AXIS_N LINEAR_AXES + E_STEPPERS
 
 #if ENABLED(DWIN_CREALITY_LCD)
   #define SERIAL_CATCHALL 0

@@ -59,20 +59,6 @@
 #undef TEST3
 #undef TEST4
 
-#if LINEAR_AXES == 3
-  #if EXTRUDERS == 1 && NUM_AXIS != LINEAR_AXES + EXTRUDERS
-    #error "LINEAR_AXES 3 plus EXTRUDERS 1 does not yield NUM_AXIS 4."
-  #elif EXTRUDERS == 0 && NUM_AXIS != LINEAR_AXES + EXTRUDERS
-    #error "LINEAR_AXES 3 plus EXTRUDERS 0 does not yield NUM_AXIS 3."
-  #endif
-#elif LINEAR_AXES == 4
-  #if EXTRUDERS == 1 && NUM_AXIS != LINEAR_AXES + EXTRUDERS
-    #error "LINEAR_AXES 4 plus EXTRUDERS 1 does not yield NUM_AXIS 5."
-  #elif EXTRUDERS == 0 && NUM_AXIS != LINEAR_AXES + EXTRUDERS
-    #error "LINEAR_AXES 4 plus EXTRUDERS 0 does not yield NUM_AXIS 4."
-  #endif
-#endif
-
 /**
  * We try our best to include sanity checks for all changed configuration
  * directives because users have a tendency to use outdated config files with
