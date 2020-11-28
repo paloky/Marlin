@@ -36,7 +36,7 @@
 
 // Axis homed and known-position states
 extern uint8_t axis_homed, axis_known_position;
-constexpr uint8_t xyz_bits = _BV(X_AXIS) | _BV(Y_AXIS) | _BV(Z_AXIS);
+constexpr uint8_t xyz_bits = GANG_N(LINEAR_AXES, _BV(X_AXIS), | _BV(Y_AXIS), | _BV(Z_AXIS), | _BV(I_AXIS), | _BV(J_AXIS), | _BV(K_AXIS));
 FORCE_INLINE bool no_axes_homed() { return !axis_homed; }
 FORCE_INLINE bool all_axes_homed() { return (axis_homed & xyz_bits) == xyz_bits; }
 FORCE_INLINE bool all_axes_known() { return (axis_known_position & xyz_bits) == xyz_bits; }
@@ -57,7 +57,7 @@ extern xyze_pos_t current_position,  // High-level current tool position
 
 // G60/G61 Position Save and Return
 #if SAVED_POSITIONS
-  extern uint8_t saved_slots[(SAVED_POSITIONS + 7) >> 3];
+  extern uint8_t saved_slots[(SAVED_POSITIONS + 7) >> 3]; // TODO: Add support for LINEAR_AXES >= 4. Maybe >> LINEAR_AXES
   extern xyz_pos_t stored_position[SAVED_POSITIONS];
 #endif
 
@@ -82,7 +82,7 @@ extern xyz_pos_t cartes;
  * Feed rates are often configured with mm/m
  * but the planner and stepper like mm/s units.
  */
-extern const feedRate_t homing_feedrate_mm_s[XYZ];
+extern const feedRate_t homing_feedrate_mm_s[LINEAR_AXES];
 FORCE_INLINE feedRate_t homing_feedrate(const AxisEnum a) { return pgm_read_float(&homing_feedrate_mm_s[a]); }
 feedRate_t get_homing_bump_feedrate(const AxisEnum axis);
 
@@ -115,7 +115,7 @@ inline int8_t pgm_read_any(const int8_t *p) { return TERN(__IMXRT1062__, *p, pgm
 
 #define XYZ_DEFS(T, NAME, OPT) \
   inline T NAME(const AxisEnum axis) { \
-    static const XYZval<T> NAME##_P DEFS_PROGMEM = { X_##OPT, Y_##OPT, Z_##OPT }; \
+      static const XYZval<T> NAME##_P DEFS_PROGMEM = ARRAY_N(LINEAR_AXES, X_##OPT, Y_##OPT, Z_##OPT, I_##OPT, J_##OPT, K_##OPT); \
     return pgm_read_any(&NAME##_P[axis]); \
   }
 XYZ_DEFS(float, base_min_pos,   MIN_POS);
@@ -166,6 +166,24 @@ inline float home_bump_mm(const AxisEnum axis) {
           case Z_AXIS:
             TERN_(MIN_SOFTWARE_ENDSTOP_Z, amin = min.z);
             TERN_(MAX_SOFTWARE_ENDSTOP_Z, amax = max.z);
+          #if LINEAR_AXES >= 4 // TOTO: Test for LINEAR_AXES >= 4
+            case I_AXIS:
+              TERN_(MIN_SOFTWARE_ENDSTOP_I, amin = min.i);
+              TERN_(MIN_SOFTWARE_ENDSTOP_I, amax = max.i);
+              break;
+          #endif
+          #if LINEAR_AXES >= 5
+            case J_AXIS:
+              TERN_(MIN_SOFTWARE_ENDSTOP_J, amin = min.j);
+              TERN_(MIN_SOFTWARE_ENDSTOP_J, amax = max.j);
+              break;
+          #endif
+          #if LINEAR_AXES >= 6
+            case K_AXIS:
+              TERN_(MIN_SOFTWARE_ENDSTOP_K, amin = min.k);
+              TERN_(MIN_SOFTWARE_ENDSTOP_K, amax = max.k);
+              break;
+          #endif
           default: break;
         }
       #endif
@@ -247,15 +265,28 @@ inline void prepare_internal_move_to_destination(const feedRate_t &fr_mm_s=0.0f)
 /**
  * Blocking movement and shorthand functions
  */
-void do_blocking_move_to(const float rx, const float ry, const float rz, const feedRate_t &fr_mm_s=0.0f);
+void do_blocking_move_to(
+  LIST_N(LINEAR_AXES, const float rx, const float ry, const float rz, const float ri, const float rj, const float rk),
+  const feedRate_t &fr_mm_s=0.0f
+);
 void do_blocking_move_to(const xy_pos_t &raw, const feedRate_t &fr_mm_s=0.0f);
 void do_blocking_move_to(const xyz_pos_t &raw, const feedRate_t &fr_mm_s=0.0f);
-void do_blocking_move_to(const xyze_pos_t &raw, const feedRate_t &fr_mm_s=0.0f);
 
 void do_blocking_move_to_x(const float &rx, const feedRate_t &fr_mm_s=0.0f);
 void do_blocking_move_to_y(const float &ry, const feedRate_t &fr_mm_s=0.0f);
 void do_blocking_move_to_z(const float &rz, const feedRate_t &fr_mm_s=0.0f);
-
+#if LINEAR_AXES >= 4
+  void do_blocking_move_to_i(const float &ri, const feedRate_t &fr_mm_s=0.0f);
+  void do_blocking_move_to_xyz_i(const xyze_pos_t &raw, const float &i, const feedRate_t &fr_mm_s=0.0f);
+#endif
+#if LINEAR_AXES >= 5
+  void do_blocking_move_to_j(const float &rj, const feedRate_t &fr_mm_s=0.0f);
+  void do_blocking_move_to_xyzi_j(const xyze_pos_t &raw, const float &j, const feedRate_t &fr_mm_s=0.0f);
+#endif
+#if LINEAR_AXES >= 6
+  void do_blocking_move_to_k(const float &rk, const feedRate_t &fr_mm_s=0.0f);
+  void do_blocking_move_to_xyzij_k(const xyze_pos_t &raw, const float &k, const feedRate_t &fr_mm_s=0.0f);
+#endif
 void do_blocking_move_to_xy(const float &rx, const float &ry, const feedRate_t &fr_mm_s=0.0f);
 void do_blocking_move_to_xy(const xy_pos_t &raw, const feedRate_t &fr_mm_s=0.0f);
 FORCE_INLINE void do_blocking_move_to_xy(const xyz_pos_t &raw, const feedRate_t &fr_mm_s=0.0f)  { do_blocking_move_to_xy(xy_pos_t(raw), fr_mm_s); }
@@ -274,11 +305,12 @@ void do_z_clearance(const float &zclear, const bool z_known=true, const bool rai
 //
 // Homing
 //
+#define LINEAR_AXIS_MASK (_BV(LINEAR_AXES)-1)
 void homeaxis(const AxisEnum axis);
 void set_axis_is_at_home(const AxisEnum axis);
 void set_axis_never_homed(const AxisEnum axis);
-uint8_t axes_should_home(uint8_t axis_bits=0x07);
-bool homing_needed_error(uint8_t axis_bits=0x07);
+uint8_t axes_should_home(uint8_t axis_bits=LINEAR_AXIS_MASK);
+bool homing_needed_error(uint8_t axis_bits=LINEAR_AXIS_MASK);
 
 #if ENABLED(NO_MOTION_BEFORE_HOMING)
   #define MOTION_CONDITIONS (IsRunning() && !homing_needed_error())
@@ -328,6 +360,19 @@ bool homing_needed_error(uint8_t axis_bits=0x07);
 #define RAW_X_POSITION(POS)     LOGICAL_TO_NATIVE(POS, X_AXIS)
 #define RAW_Y_POSITION(POS)     LOGICAL_TO_NATIVE(POS, Y_AXIS)
 #define RAW_Z_POSITION(POS)     LOGICAL_TO_NATIVE(POS, Z_AXIS)
+
+#if LINEAR_AXES >= 4
+  #define LOGICAL_I_POSITION(POS) NATIVE_TO_LOGICAL(POS, I_AXIS)
+  #define RAW_I_POSITION(POS)     LOGICAL_TO_NATIVE(POS, I_AXIS)
+#endif
+#if LINEAR_AXES >= 5
+  #define LOGICAL_J_POSITION(POS) NATIVE_TO_LOGICAL(POS, J_AXIS)
+  #define RAW_J_POSITION(POS)     LOGICAL_TO_NATIVE(POS, J_AXIS)
+#endif
+#if LINEAR_AXES >= 6
+  #define LOGICAL_K_POSITION(POS) NATIVE_TO_LOGICAL(POS, K_AXIS)
+  #define RAW_K_POSITION(POS)     LOGICAL_TO_NATIVE(POS, K_AXIS)
+#endif
 
 /**
  * position_is_reachable family of functions
