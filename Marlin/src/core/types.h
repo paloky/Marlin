@@ -326,10 +326,7 @@ struct XYZval {
     FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pk)     { CODE_N(LINEAR_AXES, x = pxy.x, y = pxy.y, z = pz, i = pi, j = pj, k = pk); }
   #endif
   FI void reset()                                                                       { GANG_N(LINEAR_AXES, x =, y =, z =, i =, j =, k =) 0; }
-  #if ENABLED(ASYNC_SECONDARY_AXES)
-    FI T magnitude() const { return (T)sqrtf(x*x + y*y + z*z); }
-  #else
-    FI T magnitude() const { return (T)sqrtf(GANG_N(LINEAR_AXES, x*x, + y*y, + z*z, + i*i, + j*j, + k*k)); }
+  FI T magnitude() const { return (T)sqrtf(GANG_N(LINEAR_AXES, x*x, + y*y, + z*z, + i*i, + j*j, + k*k)); }
   #endif
   FI operator T* ()                                    { return pos; }
   FI operator bool()                                   { return 0 GANG_N(LINEAR_AXES, || z, || x, || y, || i, || j, || k); }
@@ -423,10 +420,8 @@ struct XYZEval {
     T pos[LINEAR_AXES + 1];
   };
   FI void reset()                                             { e = GANG_N(LINEAR_AXES, x =, y =, z =, i =, j =, k =) 0; }
-  #if ENABLED(ASYNC_SECONDARY_AXES)
-    FI T magnitude() const { return (T)sqrtf(e*e + x*x + y*y + z*z); }
-  #else
-    FI T magnitude() const { return (T)sqrtf(e*e GANG_N(LINEAR_AXES, + x*x, + y*y, + z*z, + i*i, + j*j, + k*k)); }
+
+  FI T magnitude() const { return (T)sqrtf(e*e GANG_N(LINEAR_AXES, + x*x, + y*y, + z*z, + i*i, + j*j, + k*k)); }
   #endif
   FI operator T* ()                                             { return pos; }
   FI operator bool()                                            { return e GANG_N(LINEAR_AXES, || x, || y, || z, || i, || j, || k); }

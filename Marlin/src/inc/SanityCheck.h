@@ -1214,10 +1214,33 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
  */
 
 /**
+ * Allow only extra axis codes that do not conflict with G-code parameter names
+ */
+#if LINEAR_AXES >= 4
+  #if AXIS4_NAME != 'A' && AXIS4_NAME != 'B' && AXIS4_NAME != 'C' && AXIS4_NAME != 'U' && AXIS4_NAME != 'V' && AXIS4_NAME != 'W')
+    #error "AXIS4_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
+  #endif
+#endif
+#if LINEAR_AXES >= 5
+  #if AXIS5_NAME == AXIS4_NAME || AXIS5_NAME == AXIS6_NAME
+    #error "AXIS5_NAME must be different from AXIS4_NAME and AXIS6_NAME"
+  #elif AXIS5_NAME != 'A' && AXIS5_NAME != 'B' && AXIS5_NAME != 'C' && AXIS5_NAME != 'U' && AXIS5_NAME != 'V' && AXIS5_NAME != 'W')
+    #error "AXIS5_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
+  #endif
+#endif
+#if LINEAR_AXES >= 6
+  #if AXIS6_NAME == AXIS5_NAME || AXIS6_NAME == AXIS4_NAME
+    #error "AXIS6_NAME must be different from AXIS5_NAME and AXIS4_NAME."
+  #if AXIS6_NAME != 'A' && AXIS6_NAME != 'B' && AXIS6_NAME != 'C' && AXIS6_NAME != 'U' && AXIS6_NAME != 'V' && AXIS6_NAME != 'W')
+    #error "AXIS6_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
+  #endif
+#endif
+
+/**
  * Allow only one kinematic type to be defined
  */
-#if MANY(DELTA, MORGAN_SCARA, COREXY, COREXZ, COREYZ, COREYX, COREZX, COREZY, MARKFORGED_XY, FOAMCUTTER_XYUV, ASYNC_SECONDARY_AXES)
-  #error "Please enable only one of DELTA, MORGAN_SCARA, COREXY, COREYX, COREXZ, COREZX, COREYZ, COREZY, MARKFORGED_XY, FOAMCUTTER_XYUV, or ASYNC_SECONDARY_AXES."
+#if MANY(DELTA, MORGAN_SCARA, COREXY, COREXZ, COREYZ, COREYX, COREZX, COREZY, MARKFORGED_XY, FOAMCUTTER_XYUV)
+  #error "Please enable only one of DELTA, MORGAN_SCARA, COREXY, COREYX, COREXZ, COREZX, COREYZ, COREZY, MARKFORGED_XY, or FOAMCUTTER_XYUV."
 #endif
 
 /**
@@ -1242,11 +1265,12 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
 #endif
 
 /**
- * Delta requirements
+ * FOAMCUTTER_XYUV requirements
  */
 #if ENABLED(FOAMCUTTER_XYUV) && LINEAR_AXES < 5
   #error "FOAMCUTTER_XYUV requires LINEAR_AXES >= 5."
 #endif
+
 /**
  * Junction deviation is incompatible with kinematic systems.
  */
@@ -2526,6 +2550,19 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #error "TMC2208 or TMC2209 on Y2 requires Y2_HARDWARE_SERIAL or Y2_SERIAL_(RX|TX)_PIN."
 #elif INVALID_TMC_UART(Z)
   #error "TMC2208 or TMC2209 on Z requires Z_HARDWARE_SERIAL or Z_SERIAL_(RX|TX)_PIN."
+#if LINEAR_AXES >= 4
+  #if INVALID_TMC_UART(I)
+    #error "TMC2208 or TMC2209 on I requires I_HARDWARE_SERIAL or I_SERIAL_(RX|TX)_PIN."
+#endif
+#if LINEAR_AXES >= 5
+  #if INVALID_TMC_UART(J)
+    #error "TMC2208 or TMC2209 on J requires J_HARDWARE_SERIAL or J_SERIAL_(RX|TX)_PIN."
+#endif
+#if LINEAR_AXES >= 6
+  #if INVALID_TMC_UART(K)
+    #error "TMC2208 or TMC2209 on K requires K_HARDWARE_SERIAL or K_SERIAL_(RX|TX)_PIN."
+#endif
+
 #elif INVALID_TMC_UART(Z2)
   #error "TMC2208 or TMC2209 on Z2 requires Z2_HARDWARE_SERIAL or Z2_SERIAL_(RX|TX)_PIN."
 #elif INVALID_TMC_UART(Z3)
@@ -2610,6 +2647,18 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   INVALID_TMC_MS(Z3)
 #elif !TMC_MICROSTEP_IS_VALID(Z4)
   INVALID_TMC_MS(Z4)
+#if LINEAR_AXES >= 4
+  #elif !TMC_MICROSTEP_IS_VALID(I)
+  INVALID_TMC_MS(I)
+#endif
+#if LINEAR_AXES >= 5
+  #elif !TMC_MICROSTEP_IS_VALID(J)
+    INVALID_TMC_MS(J)
+#endif
+#if LINEAR_AXES >= 6
+  #elif !TMC_MICROSTEP_IS_VALID(K)
+    INVALID_TMC_MS(K)
+#endif
 #elif !TMC_MICROSTEP_IS_VALID(E0)
   INVALID_TMC_MS(E0)
 #elif !TMC_MICROSTEP_IS_VALID(E1)
@@ -2646,6 +2695,15 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #define X_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(X,TMC2209)
   #define Y_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(Y,TMC2209)
   #define Z_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(Z,TMC2209)
+  #if LINEAR_AXES >= 4
+    #define I_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(I,TMC2209)
+  #endif
+  #if LINEAR_AXES >= 5
+    #define J_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(J,TMC2209)
+  #endif
+  #if LINEAR_AXES >= 6
+    #define K_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(K,TMC2209)
+  #endif
 
   #if NONE(SPI_ENDSTOPS, ONBOARD_ENDSTOPPULLUPS, ENDSTOPPULLUPS)
     #if   X_SENSORLESS && X_HOME_DIR < 0 && DISABLED(ENDSTOPPULLUP_XMIN)
@@ -2660,6 +2718,18 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
       #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_ZMIN (or ENDSTOPPULLUPS) when homing to Z_MIN."
     #elif Z_SENSORLESS && Z_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_ZMAX)
       #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_ZMAX (or ENDSTOPPULLUPS) when homing to Z_MAX."
+    #if LINEAR_AXES >= 4
+      #elif I_SENSORLESS && I_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_IMAX)
+        #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_IMAX (or ENDSTOPPULLUPS) when homing to I_MAX."
+    #endif
+    #if LINEAR_AXES >= 5
+      #elif J_SENSORLESS && J_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_JMAX)
+        #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_JMAX (or ENDSTOPPULLUPS) when homing to J_MAX."
+    #endif
+    #if LINEAR_AXES >= 6
+      #elif K_SENSORLESS && K_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_KMAX)
+        #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_KMAX (or ENDSTOPPULLUPS) when homing to K_MAX."
+    #endif
     #endif
   #endif
 
@@ -2704,6 +2774,42 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
       #else
         #error "SENSORLESS_HOMING requires Z_MAX_ENDSTOP_INVERTING = false when homing TMC2209 to Z_MAX."
       #endif
+    #elif LINEAR_AXES >= 4 && I_SENSORLESS && I_HOME_DIR < 0 && I_MIN_ENDSTOP_INVERTING != I_ENDSTOP_INVERTING
+      #if I_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires I_MIN_ENDSTOP_INVERTING = true when homing to I_MIN."
+      #else
+        #error "SENSORLESS_HOMING requires I_MIN_ENDSTOP_INVERTING = false when homing TMC2209 to I_MIN."
+      #endif
+    #elif LINEAR_AXES >= 4 && I_SENSORLESS && I_HOME_DIR > 0 && I_MAX_ENDSTOP_INVERTING != I_ENDSTOP_INVERTING
+      #if I_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires I_MAX_ENDSTOP_INVERTING = true when homing to I_MAX."
+      #else
+        #error "SENSORLESS_HOMING requires I_MAX_ENDSTOP_INVERTING = false when homing TMC2209 to I_MAX."
+      #endif
+    #elif LINEAR_AXES >= 5 && J_SENSORLESS && J_HOME_DIR < 0 && J_MIN_ENDSTOP_INVERTING != J_ENDSTOP_INVERTING
+      #if J_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires J_MIN_ENDSTOP_INVERTING = true when homing to J_MIN."
+      #else
+        #error "SENSORLESS_HOMING requires J_MIN_ENDSTOP_INVERTING = false when homing TMC2209 to J_MIN."
+      #endif
+    #elif LINEAR_AXES >= 5 && J_SENSORLESS && J_HOME_DIR > 0 && J_MAX_ENDSTOP_INVERTING != J_ENDSTOP_INVERTING
+      #if J_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires J_MAX_ENDSTOP_INVERTING = true when homing to J_MAX."
+      #else
+        #error "SENSORLESS_HOMING requires J_MAX_ENDSTOP_INVERTING = false when homing TMC2209 to J_MAX."
+      #endif
+    #elif LINEAR_AXES >= 6 && K_SENSORLESS && K_HOME_DIR < 0 && K_MIN_ENDSTOP_INVERTING != K_ENDSTOP_INVERTING
+      #if K_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires K_MIN_ENDSTOP_INVERTING = true when homing to K_MIN."
+      #else
+        #error "SENSORLESS_HOMING requires K_MIN_ENDSTOP_INVERTING = false when homing TMC2209 to K_MIN."
+      #endif
+    #elif LINEAR_AXES >= 6 && K_SENSORLESS && K_HOME_DIR > 0 && K_MAX_ENDSTOP_INVERTING != K_ENDSTOP_INVERTING
+      #if K_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires K_MAX_ENDSTOP_INVERTING = true when homing to K_MAX."
+      #else
+        #error "SENSORLESS_HOMING requires K_MAX_ENDSTOP_INVERTING = false when homing TMC2209 to K_MAX."
+      #endif
     #endif
   #endif
 
@@ -2718,6 +2824,9 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #undef X_ENDSTOP_INVERTING
   #undef Y_ENDSTOP_INVERTING
   #undef Z_ENDSTOP_INVERTING
+  #undef I_ENDSTOP_INVERTING
+  #undef J_ENDSTOP_INVERTING
+  #undef K_ENDSTOP_INVERTING
 #endif
 
 // Sensorless probing requirements
@@ -3338,6 +3447,22 @@ static_assert(   _ARR_TEST(3,0) && _ARR_TEST(3,1) && _ARR_TEST(3,2)
 #if _BAD_DRIVER(Z)
   #error "Z_DRIVER_TYPE is not recognized."
 #endif
+#if LINEAR_AXES >= 4
+  #if _BAD_DRIVER(Z)
+    #error "I_DRIVER_TYPE is not recognized."
+  #endif
+#endif
+#if LINEAR_AXES >= 5
+  #if _BAD_DRIVER(Z)
+    #error "I_DRIVER_TYPE is not recognized."
+  #endif
+#endif
+#if LINEAR_AXES >= 6
+  #if _BAD_DRIVER(Z)
+    #error "I_DRIVER_TYPE is not recognized."
+  #endif
+#endif
+
 #if _BAD_DRIVER(X2)
   #error "X2_DRIVER_TYPE is not recognized."
 #endif

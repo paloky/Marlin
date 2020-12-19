@@ -2026,27 +2026,6 @@ bool Planner::_populate_block(block_t * const block, bool split_move,
         #elif CORE_IS_YZ
           sq(steps_dist_mm.x) + sq(steps_dist_mm.head.y) + sq(steps_dist_mm.head.z)
 
-        #elif ENABLED(ASYNC_SECONDARY_AXES)
-          // XYZ vector magnitude. If one of the secondary axes IJK moves further
-          // than the XYZ vector magnitude, take the largest single-axis move, instead.
-          #if LINEAR_AXES == 6
-            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
-              > _MAX(sq(steps_dist_mm.i), sq(steps_dist_mm.j), sq(steps_dist_mm.k))
-              ? sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
-              : _MAX(sq(steps_dist_mm.i), sq(steps_dist_mm.j), sq(steps_dist_mm.k))
-          #elif LINEAR_AXES == 5
-            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
-              > _MAX(sq(steps_dist_mm.i), sq(steps_dist_mm.j))
-              ? sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
-              : _MAX(sq(steps_dist_mm.i), sq(steps_dist_mm.j))
-          #elif LINEAR_AXES == 4
-            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
-              > sq(steps_dist_mm.i)
-              ? sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
-              : sq(steps_dist_mm.i)
-          #else
-            sq(steps_dist_mm.x) + sq(steps_dist_mm.y) + sq(steps_dist_mm.z)
-          #endif
 
         #elif defined(FOAMCUTTER_XYUV)
           // return the largest distance move from either X/Y or I/J plane

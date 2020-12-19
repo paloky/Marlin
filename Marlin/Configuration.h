@@ -68,15 +68,6 @@
 //
 
 //===========================================================================
-//========================= ASYNC_SECONDARY_AXES ============================
-//===========================================================================
-// For a CNC machine with LINEAR_AXES >= 4 where primary axes XYZ are
-// coordinated. Optional additional axes I(, J(, K)) are uncoordinated
-// (asynchronous). Disable for coordinated movement of all axes.
-//
-//#define ASYNC_SECONDARY_AXES
-
-//===========================================================================
 //=========================== FOAMCUTTER_XYUV ==============================
 //===========================================================================
 // For a hot wire cutter with parallel horizontal axes X, I where the hights
@@ -175,9 +166,6 @@
  * Axis codes for additional axes:
  * This defines the axis code that is used in G-code commands to
  * reference a specific axis.
- * 'I' for generic 4th axis
- * 'J' for generic 5th axis
- * 'K' for generic 6th axis
  * 'A' for rotational axis parallel to X
  * 'B' for rotational axis parallel to Y
  * 'C' for rotational axis parallel to Z
@@ -188,13 +176,13 @@
  * I (AXIS4), J (AXIS5), K (AXIS6).
  */
 #if LINEAR_AXES >= 4
-  #define AXIS4_NAME 'I' // :['I', 'A', 'B', 'C', 'U', 'V', 'W']
+  #define AXIS4_NAME 'A' // :['A', 'B', 'C', 'U', 'V', 'W']
 #endif
 #if LINEAR_AXES >= 5
-  #define AXIS5_NAME 'J' // :['J', 'A', 'B', 'C', 'U', 'V', 'W']
+  #define AXIS5_NAME 'B' // :['A', 'B', 'C', 'U', 'V', 'W']
 #endif
 #if LINEAR_AXES >= 6
-  #define AXIS6_NAME 'K' // :['K', 'A', 'B', 'C', 'U', 'V', 'W']
+  #define AXIS6_NAME 'C' // :['A', 'B', 'C', 'U', 'V', 'W']
 #endif
 
 // @section extruder
