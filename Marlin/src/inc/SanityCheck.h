@@ -1217,21 +1217,21 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
  * Allow only extra axis codes that do not conflict with G-code parameter names
  */
 #if LINEAR_AXES >= 4
-  #if AXIS4_NAME != 'A' && AXIS4_NAME != 'B' && AXIS4_NAME != 'C' && AXIS4_NAME != 'U' && AXIS4_NAME != 'V' && AXIS4_NAME != 'W')
+  #if AXIS4_NAME != 'A' && AXIS4_NAME != 'B' && AXIS4_NAME != 'C' && AXIS4_NAME != 'U' && AXIS4_NAME != 'V' && AXIS4_NAME != 'W'
     #error "AXIS4_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
   #endif
 #endif
 #if LINEAR_AXES >= 5
   #if AXIS5_NAME == AXIS4_NAME || AXIS5_NAME == AXIS6_NAME
     #error "AXIS5_NAME must be different from AXIS4_NAME and AXIS6_NAME"
-  #elif AXIS5_NAME != 'A' && AXIS5_NAME != 'B' && AXIS5_NAME != 'C' && AXIS5_NAME != 'U' && AXIS5_NAME != 'V' && AXIS5_NAME != 'W')
+  #elif AXIS5_NAME != 'A' && AXIS5_NAME != 'B' && AXIS5_NAME != 'C' && AXIS5_NAME != 'U' && AXIS5_NAME != 'V' && AXIS5_NAME != 'W'
     #error "AXIS5_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
   #endif
 #endif
 #if LINEAR_AXES >= 6
   #if AXIS6_NAME == AXIS5_NAME || AXIS6_NAME == AXIS4_NAME
     #error "AXIS6_NAME must be different from AXIS5_NAME and AXIS4_NAME."
-  #if AXIS6_NAME != 'A' && AXIS6_NAME != 'B' && AXIS6_NAME != 'C' && AXIS6_NAME != 'U' && AXIS6_NAME != 'V' && AXIS6_NAME != 'W')
+  #elif AXIS6_NAME != 'A' && AXIS6_NAME != 'B' && AXIS6_NAME != 'C' && AXIS6_NAME != 'U' && AXIS6_NAME != 'V' && AXIS6_NAME != 'W'
     #error "AXIS6_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
   #endif
 #endif
@@ -2076,18 +2076,15 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
     #error "Enable USE_YMIN_PLUG when homing Y to MIN."
   #elif Y_HOME_DIR > 0 && DISABLED(USE_YMAX_PLUG)
     #error "Enable USE_YMAX_PLUG when homing Y to MAX."
-  #endif
-  #if LINEAR_AXES >= 4 && I_HOME_DIR < 0 && DISABLED(USE_IMIN_PLUG)
+  #elif LINEAR_AXES >= 4 && I_HOME_DIR < 0 && DISABLED(USE_IMIN_PLUG)
     #error "Enable USE_IMIN_PLUG when homing I to MIN."
   #elif LINEAR_AXES >= 4 && I_HOME_DIR > 0 && DISABLED(USE_IMAX_PLUG)
     #error "Enable USE_IMAX_PLUG when homing I to MAX."
-  #endif
-  #if LINEAR_AXES >= 5 && J_HOME_DIR < 0 && DISABLED(USE_JMIN_PLUG)
+  #elif LINEAR_AXES >= 5 && J_HOME_DIR < 0 && DISABLED(USE_JMIN_PLUG)
     #error "Enable USE_JMIN_PLUG when homing J to MIN."
   #elif LINEAR_AXES >= 5 && J_HOME_DIR > 0 && DISABLED(USE_JMAX_PLUG)
     #error "Enable USE_JMAX_PLUG when homing J to MAX."
-  #endif
-  #if LINEAR_AXES >= 6 && K_HOME_DIR < 0 && DISABLED(USE_KMIN_PLUG)
+  #elif LINEAR_AXES >= 6 && K_HOME_DIR < 0 && DISABLED(USE_KMIN_PLUG)
     #error "Enable USE_KMIN_PLUG when homing K to MIN."
   #elif LINEAR_AXES >= 6 && K_HOME_DIR > 0 && DISABLED(USE_KMAX_PLUG)
     #error "Enable USE_KMAX_PLUG when homing K to MAX."
@@ -2550,19 +2547,6 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #error "TMC2208 or TMC2209 on Y2 requires Y2_HARDWARE_SERIAL or Y2_SERIAL_(RX|TX)_PIN."
 #elif INVALID_TMC_UART(Z)
   #error "TMC2208 or TMC2209 on Z requires Z_HARDWARE_SERIAL or Z_SERIAL_(RX|TX)_PIN."
-#if LINEAR_AXES >= 4
-  #if INVALID_TMC_UART(I)
-    #error "TMC2208 or TMC2209 on I requires I_HARDWARE_SERIAL or I_SERIAL_(RX|TX)_PIN."
-#endif
-#if LINEAR_AXES >= 5
-  #if INVALID_TMC_UART(J)
-    #error "TMC2208 or TMC2209 on J requires J_HARDWARE_SERIAL or J_SERIAL_(RX|TX)_PIN."
-#endif
-#if LINEAR_AXES >= 6
-  #if INVALID_TMC_UART(K)
-    #error "TMC2208 or TMC2209 on K requires K_HARDWARE_SERIAL or K_SERIAL_(RX|TX)_PIN."
-#endif
-
 #elif INVALID_TMC_UART(Z2)
   #error "TMC2208 or TMC2209 on Z2 requires Z2_HARDWARE_SERIAL or Z2_SERIAL_(RX|TX)_PIN."
 #elif INVALID_TMC_UART(Z3)
@@ -2585,6 +2569,12 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #error "TMC2208 or TMC2209 on E6 requires E6_HARDWARE_SERIAL or E6_SERIAL_(RX|TX)_PIN."
 #elif INVALID_TMC_UART(E7)
   #error "TMC2208 or TMC2209 on E7 requires E7_HARDWARE_SERIAL or E7_SERIAL_(RX|TX)_PIN."
+#elif LINEAR_AXES >= 4 && INVALID_TMC_UART(I)
+  #error "TMC2208 or TMC2209 on I requires I_HARDWARE_SERIAL or I_SERIAL_(RX|TX)_PIN."
+#elif LINEAR_AXES >= 5 && INVALID_TMC_UART(J)
+  #error "TMC2208 or TMC2209 on J requires J_HARDWARE_SERIAL or J_SERIAL_(RX|TX)_PIN."
+#elif LINEAR_AXES >= 6 && INVALID_TMC_UART(K)
+  #error "TMC2208 or TMC2209 on K requires K_HARDWARE_SERIAL or K_SERIAL_(RX|TX)_PIN."
 #endif
 #undef INVALID_TMC_UART
 
@@ -2647,18 +2637,6 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   INVALID_TMC_MS(Z3)
 #elif !TMC_MICROSTEP_IS_VALID(Z4)
   INVALID_TMC_MS(Z4)
-#if LINEAR_AXES >= 4
-  #elif !TMC_MICROSTEP_IS_VALID(I)
-  INVALID_TMC_MS(I)
-#endif
-#if LINEAR_AXES >= 5
-  #elif !TMC_MICROSTEP_IS_VALID(J)
-    INVALID_TMC_MS(J)
-#endif
-#if LINEAR_AXES >= 6
-  #elif !TMC_MICROSTEP_IS_VALID(K)
-    INVALID_TMC_MS(K)
-#endif
 #elif !TMC_MICROSTEP_IS_VALID(E0)
   INVALID_TMC_MS(E0)
 #elif !TMC_MICROSTEP_IS_VALID(E1)
@@ -2675,6 +2653,12 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   INVALID_TMC_MS(E6)
 #elif !TMC_MICROSTEP_IS_VALID(E7)
   INVALID_TMC_MS(E7)
+#elif LINEAR_AXES >= 4 && !TMC_MICROSTEP_IS_VALID(I)
+  INVALID_TMC_MS(I)
+#elif LINEAR_AXES >= 5 && !TMC_MICROSTEP_IS_VALID(J)
+  INVALID_TMC_MS(J)
+#elif LINEAR_AXES >= 6 && !TMC_MICROSTEP_IS_VALID(K)
+  INVALID_TMC_MS(K)
 #endif
 #undef INVALID_TMC_MS
 #undef TMC_MICROSTEP_IS_VALID
@@ -2718,18 +2702,12 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
       #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_ZMIN (or ENDSTOPPULLUPS) when homing to Z_MIN."
     #elif Z_SENSORLESS && Z_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_ZMAX)
       #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_ZMAX (or ENDSTOPPULLUPS) when homing to Z_MAX."
-    #if LINEAR_AXES >= 4
-      #elif I_SENSORLESS && I_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_IMAX)
-        #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_IMAX (or ENDSTOPPULLUPS) when homing to I_MAX."
-    #endif
-    #if LINEAR_AXES >= 5
-      #elif J_SENSORLESS && J_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_JMAX)
-        #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_JMAX (or ENDSTOPPULLUPS) when homing to J_MAX."
-    #endif
-    #if LINEAR_AXES >= 6
-      #elif K_SENSORLESS && K_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_KMAX)
-        #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_KMAX (or ENDSTOPPULLUPS) when homing to K_MAX."
-    #endif
+    #elif LINEAR_AXES >= 4 && I_SENSORLESS && I_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_IMAX)
+      #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_IMAX (or ENDSTOPPULLUPS) when homing to I_MAX."
+    #elif LINEAR_AXES >= 5 && J_SENSORLESS && J_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_JMAX)
+      #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_JMAX (or ENDSTOPPULLUPS) when homing to J_MAX."
+    #elif LINEAR_AXES >= 6 && K_SENSORLESS && K_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_KMAX)
+      #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_KMAX (or ENDSTOPPULLUPS) when homing to K_MAX."
     #endif
   #endif
 

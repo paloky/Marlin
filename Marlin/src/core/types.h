@@ -327,7 +327,6 @@ struct XYZval {
   #endif
   FI void reset()                                                                       { GANG_N(LINEAR_AXES, x =, y =, z =, i =, j =, k =) 0; }
   FI T magnitude() const { return (T)sqrtf(GANG_N(LINEAR_AXES, x*x, + y*y, + z*z, + i*i, + j*j, + k*k)); }
-  #endif
   FI operator T* ()                                    { return pos; }
   FI operator bool()                                   { return 0 GANG_N(LINEAR_AXES, || z, || x, || y, || i, || j, || k); }
   FI XYZval<T>          copy()                   const { XYZval<T> o = *this; return o; }
@@ -420,9 +419,7 @@ struct XYZEval {
     T pos[LINEAR_AXES + 1];
   };
   FI void reset()                                             { e = GANG_N(LINEAR_AXES, x =, y =, z =, i =, j =, k =) 0; }
-
   FI T magnitude() const { return (T)sqrtf(e*e GANG_N(LINEAR_AXES, + x*x, + y*y, + z*z, + i*i, + j*j, + k*k)); }
-  #endif
   FI operator T* ()                                             { return pos; }
   FI operator bool()                                            { return e GANG_N(LINEAR_AXES, || x, || y, || z, || i, || j, || k); }
   FI void set(const T px)                                       { x = px;               }
