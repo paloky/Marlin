@@ -634,9 +634,20 @@
 /**
  * DISTINCT_E_FACTORS affects how some E factors are accessed
  */
+#ifndef LINEAR_AXES
+  #define LINEAR_AXES 3
+#endif
+
+#if EXTRUDERS >= 1 
+  #define NUM_AXIS INCREMENT(LINEAR_AXES)
+#else
+  #define NUM_AXIS LINEAR_AXES
+#endif
+
 #if ENABLED(DISTINCT_E_FACTORS) && E_STEPPERS > 1
   #define DISTINCT_E E_STEPPERS
   #define XYZE_N (XYZ + E_STEPPERS)
+  #define NUM_AXIS_N (LINEAR_AXES + E_STEPPERS)
   #define E_INDEX_N(E) (E)
   #define E_AXIS_N(E) AxisEnum(E_AXIS + E)
   #define UNUSED_E(E) NOOP
@@ -644,6 +655,7 @@
   #undef DISTINCT_E_FACTORS
   #define DISTINCT_E 1
   #define XYZE_N XYZE
+  #define NUM_AXIS_N INCREMENT(LINEAR_AXES)
   #define E_INDEX_N(E) 0
   #define E_AXIS_N(E) E_AXIS
   #define UNUSED_E(E) UNUSED(E)
@@ -1043,6 +1055,15 @@
 #endif
 #ifndef INVERT_Z_DIR
   #define INVERT_Z_DIR false
+#endif
+#if LINEAR_AXES >= 4 && !defined(INVERT_I_DIR)
+  #define INVERT_I_DIR false
+#endif
+#if LINEAR_AXES >= 5 && !defined(INVERT_J_DIR)
+  #define INVERT_J_DIR false
+#endif
+#if LINEAR_AXES >= 6 && !defined(INVERT_K_DIR)
+  #define INVERT_K_DIR false
 #endif
 #ifndef INVERT_E_DIR
   #define INVERT_E_DIR false
