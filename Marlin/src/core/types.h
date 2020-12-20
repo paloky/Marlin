@@ -324,6 +324,31 @@ struct XYZval {
     FI void set(const T px, const T py, const T pz, const T pi, const T pj, const T pk) { CODE_N(LINEAR_AXES, x = px,    y = py,    z = pz, i = pi, j = pj, k = pk); }
     FI void set(const XYval<T> pxy, const T pz, const T pi, const T pj, const T pk)     { CODE_N(LINEAR_AXES, x = pxy.x, y = pxy.y, z = pz, i = pi, j = pj, k = pk); }
   #endif
+  FI void set(const T (&arr)[XY])                                                       { x = arr[0]; y = arr[1]; }
+  FI void set(const T (&arr)[XYZ])                                                      { x = arr[0]; y = arr[1]; z = arr[2]; }
+  FI void set(const T (&arr)[XYZE])                                                     { x = arr[0]; y = arr[1]; z = arr[2]; }
+  #if XYZE_N > XYZE
+    FI void set(const T (&arr)[XYZE_N])                                                 { x = arr[0]; y = arr[1]; z = arr[2]; }
+  #endif
+  #if LINEAR AXES == 4
+    FI void set(const T (&arr)[LINEAR_AXES])                                            { x = arr[0]; y = arr[1]; z = arr[2]; i = arr[3]; }
+    FI void set(const T (&arr)[NUM_AXIS])                                               { x = arr[0]; y = arr[1]; z = arr[2]; i = arr[3]; }
+    #if NUM_AXIS_N > NUM_AXIS
+      FI void set(const T (&arr)[NUM_AXIS_N])                                           { x = arr[0]; y = arr[1]; z = arr[2]; i = arr[3]; }
+    #endif
+  #elif LINEAR AXES == 5
+    FI void set(const T (&arr)[LINEAR_AXES])                                            { x = arr[0]; y = arr[1]; z = arr[2]; i = arr[3]; j = arr[4]; }
+    FI void set(const T (&arr)[NUM_AXIS])                                               { x = arr[0]; y = arr[1]; z = arr[2]; i = arr[3]; j = arr[4]; }
+    #if NUM_AXIS_N > NUM_AXIS
+      FI void set(const T (&arr)[NUM_AXIS_N])                                           { x = arr[0]; y = arr[1]; z = arr[2]; i = arr[3]; j = arr[4]; }
+    #endif
+  #elif LINEAR AXES == 6
+    FI void set(const T (&arr)[LINEAR_AXES])                                            { x = arr[0]; y = arr[1]; z = arr[2]; i = arr[3]; j = arr[4]; k = arr[5]; }
+    FI void set(const T (&arr)[NUM_AXIS])                                               { x = arr[0]; y = arr[1]; z = arr[2]; i = arr[3]; j = arr[4]; k = arr[5]; }
+    #if NUM_AXIS_N > NUM_AXIS
+      FI void set(const T (&arr)[NUM_AXIS_N])                                           { x = arr[0]; y = arr[1]; z = arr[2]; i = arr[3]; j = arr[4]; k = arr[5]; }
+    #endif
+  #endif
   FI void reset()                                                                       { GANG_N(LINEAR_AXES, x =, y =, z =, i =, j =, k =) 0; }
   FI T magnitude() const { return (T)sqrtf(GANG_N(LINEAR_AXES, x*x, + y*y, + z*z, + i*i, + j*j, + k*k)); }
   FI operator T* ()                                    { return pos; }
