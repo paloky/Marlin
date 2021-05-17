@@ -148,7 +148,7 @@ void GcodeSuite::M204() {
  */
 void GcodeSuite::M205() {
   #define J_PARAM TERN_(HAS_JUNCTION_DEVIATION, "J")
-  #define XYZE_PARAM TERN_(HAS_CLASSIC_JERK, "XYZ" AXIS4_STR AXIS5_STR AXIS6_STR "E")
+  #define XYZE_PARAM TERN_(HAS_CLASSIC_JERK, "XYZ" AXIS4_STR AXIS5_STR AXIS6_STR AXIS7_STR "E")   /**SG**/
   if (!parser.seen("BST" J_PARAM XYZE_PARAM)) return;
 
   //planner.synchronize();
@@ -184,6 +184,9 @@ void GcodeSuite::M205() {
     #endif
     #if LINEAR_AXES >= 6
       if (parser.seen('K')) planner.set_max_jerk(K_AXIS, parser.value_linear_units());
+    #endif
+    #if LINEAR_AXES >= 7    /**SG**/
+      if (parser.seen('M')) planner.set_max_jerk(M_AXIS, parser.value_linear_units());
     #endif
     #if HAS_CLASSIC_E_JERK
       if (parser.seen('E')) planner.set_max_jerk(E_AXIS, parser.value_linear_units());

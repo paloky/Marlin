@@ -258,6 +258,25 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define K_STEP_READ() bool(READ(K_STEP_PIN))
 #endif
 
+// M Stepper    /**SG**/
+#if LINEAR_AXES >= 7
+  #ifndef M_ENABLE_INIT
+    #define M_ENABLE_INIT() SET_OUTPUT(M_ENABLE_PIN)
+    #define M_ENABLE_WRITE(STATE) WRITE(M_ENABLE_PIN,STATE)
+    #define M_ENABLE_READ() bool(READ(M_ENABLE_PIN))
+  #endif
+  #ifndef M_DIR_INIT
+    #define M_DIR_INIT() SET_OUTPUT(M_DIR_PIN)
+    #define M_DIR_WRITE(STATE) WRITE(M_DIR_PIN,STATE)
+    #define M_DIR_READ() bool(READ(M_DIR_PIN))
+  #endif
+  #define M_STEP_INIT() SET_OUTPUT(M_STEP_PIN)
+  #ifndef M_STEP_WRITE
+    #define M_STEP_WRITE(STATE) WRITE(M_STEP_PIN,STATE)
+  #endif
+  #define M_STEP_READ() bool(READ(M_STEP_PIN))
+#endif
+
 // E0 Stepper
 #ifndef E0_ENABLE_INIT
   #define E0_ENABLE_INIT() SET_OUTPUT(E0_ENABLE_PIN)
@@ -814,6 +833,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
     #define  ENABLE_STEPPER_K() NOOP
   #endif
 #endif
+
 #ifndef DISABLE_STEPPER_K
   #if HAS_K_ENABLE
     #define DISABLE_STEPPER_K() K_ENABLE_WRITE(!K_ENABLE_ON)
@@ -821,6 +841,25 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
     #define DISABLE_STEPPER_K() NOOP
   #endif
 #endif
+
+
+#ifndef ENABLE_STEPPER_M   /**SG**/
+  #if HAS_M_ENABLE
+    #define  ENABLE_STEPPER_M() M_ENABLE_WRITE( M_ENABLE_ON)
+  #else
+    #define  ENABLE_STEPPER_M() NOOP
+  #endif
+#endif
+
+#ifndef DISABLE_STEPPER_M   /**SG**/
+  #if HAS_M_ENABLE
+    #define DISABLE_STEPPER_M() M_ENABLE_WRITE(!M_ENABLE_ON)
+  #else
+    #define DISABLE_STEPPER_M() NOOP
+  #endif
+#endif
+
+
 
 #ifndef ENABLE_STEPPER_E0
   #if HAS_E0_ENABLE
@@ -977,6 +1016,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define  ENABLE_AXIS_I() NOOP
   #define DISABLE_AXIS_I() NOOP
 #endif
+
 #if LINEAR_AXES >= 5
   #define  ENABLE_AXIS_J() if (SHOULD_ENABLE(j))  {  ENABLE_STEPPER_J();  AFTER_CHANGE(j, true); }
   #define DISABLE_AXIS_J() if (SHOULD_DISABLE(j)) { DISABLE_STEPPER_J(); AFTER_CHANGE(j, false); set_axis_untrusted(J_AXIS); }
@@ -984,6 +1024,7 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define  ENABLE_AXIS_J() NOOP
   #define DISABLE_AXIS_J() NOOP
 #endif
+
 #if LINEAR_AXES >= 6
   #define  ENABLE_AXIS_K() if (SHOULD_ENABLE(k))  {  ENABLE_STEPPER_K();  AFTER_CHANGE(k, true); }
   #define DISABLE_AXIS_K() if (SHOULD_DISABLE(k)) { DISABLE_STEPPER_K(); AFTER_CHANGE(k, false); set_axis_untrusted(K_AXIS); }
@@ -992,6 +1033,13 @@ void reset_stepper_drivers();    // Called by settings.load / settings.reset
   #define DISABLE_AXIS_K() NOOP
 #endif
 
+#if LINEAR_AXES >= 7  /**SG**/
+  #define  ENABLE_AXIS_M() if (SHOULD_ENABLE(m))  {  ENABLE_STEPPER_M();  AFTER_CHANGE(m, true); }
+  #define DISABLE_AXIS_M() if (SHOULD_DISABLE(m)) { DISABLE_STEPPER_M(); AFTER_CHANGE(m, false); set_axis_untrusted(M_AXIS); }
+#else
+  #define  ENABLE_AXIS_M() NOOP
+  #define DISABLE_AXIS_M() NOOP
+#endif
 //
 // Extruder steppers enable / disable macros
 //

@@ -48,7 +48,8 @@ void GcodeSuite::M906() {
 
   bool report = true;
 
-  #if AXIS_IS_TMC(X) || AXIS_IS_TMC(X2) || AXIS_IS_TMC(Y) || AXIS_IS_TMC(Y2) || AXIS_IS_TMC(Z) || AXIS_IS_TMC(Z2) || AXIS_IS_TMC(Z3) || AXIS_IS_TMC(Z4) || AXIS_IS_TMC(I) || AXIS_IS_TMC(J) || AXIS_IS_TMC(K)
+  #if AXIS_IS_TMC(X) || AXIS_IS_TMC(X2) || AXIS_IS_TMC(Y) || AXIS_IS_TMC(Y2) || AXIS_IS_TMC(Z) || AXIS_IS_TMC(Z2) || AXIS_IS_TMC(Z3) || AXIS_IS_TMC(Z4) \
+  || AXIS_IS_TMC(I) || AXIS_IS_TMC(J) || AXIS_IS_TMC(K) || AXIS_IS_TMC(M)
     const uint8_t index = parser.byteval('I');
   #endif
 
@@ -94,6 +95,9 @@ void GcodeSuite::M906() {
       #endif
       #if AXIS_IS_TMC(K)
         case K_AXIS: TMC_SET_CURRENT(K); break;
+      #endif
+      #if AXIS_IS_TMC(M)    /**SG**/
+        case M_AXIS: TMC_SET_CURRENT(M); break;
       #endif
 
       case E_AXIS: {
@@ -163,6 +167,11 @@ void GcodeSuite::M906() {
     #if AXIS_IS_TMC(K)
       TMC_SAY_CURRENT(K);
     #endif
+    
+    #if AXIS_IS_TMC(M)    /**SG**/
+      TMC_SAY_CURRENT(M);
+    #endif
+
     #if AXIS_IS_TMC(E0)
       TMC_SAY_CURRENT(E0);
     #endif

@@ -52,4 +52,7 @@ void setup_endstop_interrupts() {
   TERN_(HAS_J_MIN, _ATTACH(J_MIN_PIN));
   TERN_(HAS_K_MAX, _ATTACH(K_MAX_PIN));
   TERN_(HAS_K_MIN, _ATTACH(K_MIN_PIN));
+  
+  TERN_(HAS_M_MAX, _ATTACH(M_MAX_PIN)); /**SG**/
+  TERN_(HAS_M_MIN, _ATTACH(M_MIN_PIN)); /**SG**/
 }

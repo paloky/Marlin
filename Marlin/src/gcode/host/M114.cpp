@@ -134,6 +134,11 @@
       #if AXIS_IS_L64XX(K)
         REPORT_ABSOLUTE_POS(K);
       #endif
+      
+      #if AXIS_IS_L64XX(M)  /**SG**/
+        REPORT_ABSOLUTE_POS(M);
+      #endif
+
       #if AXIS_IS_L64XX(E0)
         REPORT_ABSOLUTE_POS(E0);
       #endif
@@ -180,7 +185,7 @@
     SERIAL_ECHOPGM("FromStp:");
     get_cartesian_from_steppers();  // writes 'cartes' (with forward kinematics)
     xyze_pos_t from_steppers = {
-      LIST_N(LINEAR_AXES, cartes.x, cartes.y, cartes.z, planner.get_axis_position_mm.i, planner.get_axis_position_mm.j, planner.get_axis_position_mm.k),
+      LIST_N(LINEAR_AXES, cartes.x, cartes.y, cartes.z, planner.get_axis_position_mm.i, planner.get_axis_position_mm.j, planner.get_axis_position_mm.k, planner.get_axis_position_mm.m),   /**SG**/
       planner.get_axis_position_mm(E_AXIS)
     };
     report_xyze(from_steppers);

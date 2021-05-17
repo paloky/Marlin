@@ -1065,6 +1065,9 @@
 #if LINEAR_AXES >= 6 && !defined(INVERT_K_DIR)
   #define INVERT_K_DIR false
 #endif
+#if LINEAR_AXES >= 7 && !defined(INVERT_M_DIR)    /**SG**/
+  #define INVERT_M_DIR false
+#endif
 #ifndef INVERT_E_DIR
   #define INVERT_E_DIR false
 #endif

@@ -272,6 +272,29 @@
   #endif
 #endif
 
+
+// M Stepper   /**SG**/
+#if LINEAR_AXES >= 7
+  #if AXIS_IS_L64XX(M)
+    extern L64XX_CLASS(M)         stepperM;
+    #define M_ENABLE_INIT()       NOOP
+    #define M_ENABLE_WRITE(STATE) (STATE ? stepperM.hardStop() : stepperM.free())
+    #define M_ENABLE_READ()       (stepperM.getStatus() & STATUS_HIZ)
+    #if AXIS_DRIVER_TYPE_M(L6474)
+      #define M_DIR_INIT()        SET_OUTPUT(M_DIR_PIN)
+      #define M_DIR_WRITE(STATE)  L6474_DIR_WRITE(M, STATE)
+      #define M_DIR_READ()        READ(M_DIR_PIN)
+    #else
+      #define M_DIR_INIT()        NOOP
+      #define M_DIR_WRITE(STATE)  L64XX_DIR_WRITE(M, STATE)
+      #define M_DIR_READ()        (stepper##M.getStatus() & STATUS_DIR);
+      #if AXIS_DRIVER_TYPE_M(L6470)
+        #define DISABLE_STEPPER_M() stepperM.free()
+      #endif
+    #endif
+  #endif
+#endif
+
 // E0 Stepper
 #if AXIS_IS_L64XX(E0)
   extern L64XX_CLASS(E0)         stepperE0;

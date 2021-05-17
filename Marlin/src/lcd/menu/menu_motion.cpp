@@ -116,6 +116,9 @@ void lcd_move_z() { _lcd_move_xyz(GET_TEXT(MSG_MOVE_Z), Z_AXIS); }
 #if LINEAR_AXES >= 6
   void lcd_move_k() { _lcd_move_xyz(GET_TEXT(MSG_MOVE_K), K_AXIS); }
 #endif
+#if LINEAR_AXES >= 7    /**SG**/
+  void lcd_move_m() { _lcd_move_xyz(GET_TEXT(MSG_MOVE_M), M_AXIS); }
+#endif
 
 #if E_MANUAL
 
@@ -264,6 +267,9 @@ void menu_move() {
     #if LINEAR_AXES >= 6
       SUBMENU(MSG_MOVE_K, []{ _menu_move_distance(K_AXIS, lcd_move_k); });
     #endif
+    #if LINEAR_AXES >= 7    /**SG**/
+      SUBMENU(MSG_MOVE_M, []{ _menu_move_distance(M_AXIS, lcd_move_m); });
+    #endif
   }
   else
     GCODES_ITEM(MSG_AUTO_HOME, G28_STR);
@@ -370,6 +376,9 @@ void menu_motion() {
     #endif
     #if LINEAR_AXES >= 6
       GCODES_ITEM(MSG_AUTO_HOME_K, PSTR("G28K"));
+    #endif
+    #if LINEAR_AXES >= 7    /**SG**/
+      GCODES_ITEM(MSG_AUTO_HOME_M, PSTR("G28M"));
     #endif
   #endif
 

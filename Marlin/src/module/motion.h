@@ -89,6 +89,9 @@ FORCE_INLINE feedRate_t homing_feedrate(const AxisEnum a) {
       #if LINEAR_AXES >= 6
         case K_AXIS: v = homing_feedrate_mm_m.k; break;
       #endif
+      #if LINEAR_AXES >= 7    /**SG**/
+        case M_AXIS: v = homing_feedrate_mm_m.m; break;
+      #endif
       case Z_AXIS:
           default: v = homing_feedrate_mm_m.z;
     }
@@ -129,9 +132,10 @@ extern int16_t feedrate_percentage;
 inline float pgm_read_any(const float *p)   { return TERN(__IMXRT1062__, *p, pgm_read_float(p)); }
 inline int8_t pgm_read_any(const int8_t *p) { return TERN(__IMXRT1062__, *p, pgm_read_byte(p)); }
 
+/**SG**/
 #define XYZ_DEFS(T, NAME, OPT) \
   inline T NAME(const AxisEnum axis) { \
-      static const XYZval<T> NAME##_P DEFS_PROGMEM = ARRAY_N(LINEAR_AXES, X_##OPT, Y_##OPT, Z_##OPT, I_##OPT, J_##OPT, K_##OPT); \
+      static const XYZval<T> NAME##_P DEFS_PROGMEM = ARRAY_N(LINEAR_AXES, X_##OPT, Y_##OPT, Z_##OPT, I_##OPT, J_##OPT, K_##OPT, M_##OPT); \
     return pgm_read_any(&NAME##_P[axis]); \
   }
 XYZ_DEFS(float, base_min_pos,   MIN_POS);
@@ -198,6 +202,12 @@ inline float home_bump_mm(const AxisEnum axis) {
             case K_AXIS:
               TERN_(MIN_SOFTWARE_ENDSTOP_K, amin = min.k);
               TERN_(MIN_SOFTWARE_ENDSTOP_K, amax = max.k);
+              break;
+          #endif
+          #if LINEAR_AXES >= 7  /**SG**/
+            case M_AXIS:
+              TERN_(MIN_SOFTWARE_ENDSTOP_M, amin = min.m);
+              TERN_(MIN_SOFTWARE_ENDSTOP_M, amax = max.m);
               break;
           #endif
           default: break;
@@ -282,7 +292,7 @@ inline void prepare_internal_move_to_destination(const feedRate_t &fr_mm_s=0.0f)
  * Blocking movement and shorthand functions
  */
 void do_blocking_move_to(
-  LIST_N(LINEAR_AXES, const float rx, const float ry, const float rz, const float ri, const float rj, const float rk),
+  LIST_N(LINEAR_AXES, const float rx, const float ry, const float rz, const float ri, const float rj, const float rk, const float rm),  /**SG**/
   const feedRate_t &fr_mm_s=0.0f
 );
 void do_blocking_move_to(const xy_pos_t &raw, const feedRate_t &fr_mm_s=0.0f);
@@ -304,6 +314,11 @@ void do_blocking_move_to_z(const float &rz, const feedRate_t &fr_mm_s=0.0f);
   void do_blocking_move_to_k(const float &rk, const feedRate_t &fr_mm_s=0.0f);
   void do_blocking_move_to_xyzij_k(const xyze_pos_t &raw, const float &k, const feedRate_t &fr_mm_s=0.0f);
 #endif
+#if LINEAR_AXES >= 7  /**SG**/
+  void do_blocking_move_to_m(const float &rm, const feedRate_t &fr_mm_s=0.0f);
+  void do_blocking_move_to_xyzijk_m(const xyze_pos_t &raw, const float &m, const feedRate_t &fr_mm_s=0.0f);
+#endif
+
 void do_blocking_move_to_xy(const float &rx, const float &ry, const feedRate_t &fr_mm_s=0.0f);
 void do_blocking_move_to_xy(const xy_pos_t &raw, const feedRate_t &fr_mm_s=0.0f);
 FORCE_INLINE void do_blocking_move_to_xy(const xyz_pos_t &raw, const feedRate_t &fr_mm_s=0.0f)  { do_blocking_move_to_xy(xy_pos_t(raw), fr_mm_s); }
@@ -408,6 +423,10 @@ FORCE_INLINE void set_all_unhomed()                       { axis_homed = axis_tr
 #if LINEAR_AXES >= 6
   #define LOGICAL_K_POSITION(POS) NATIVE_TO_LOGICAL(POS, K_AXIS)
   #define RAW_K_POSITION(POS)     LOGICAL_TO_NATIVE(POS, K_AXIS)
+#endif
+#if LINEAR_AXES >= 7   /**SG**/
+  #define LOGICAL_M_POSITION(POS) NATIVE_TO_LOGICAL(POS, M_AXIS)
+  #define RAW_M_POSITION(POS)     LOGICAL_TO_NATIVE(POS, M_AXIS)
 #endif
 
 /**

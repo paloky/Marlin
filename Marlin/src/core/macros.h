@@ -40,18 +40,24 @@
 #define _IMIN_   400
 #define _JMIN_   500
 #define _KMIN_   600
+#define _MMIN_   700   /**SG**/
+
 #define _XMAX_   101
 #define _YMAX_   201
 #define _ZMAX_   301
 #define _IMAX_   401
 #define _JMAX_   501
 #define _KMAX_   601
+#define _MMAX_   701   /**SG**/
+
 #define _XDIAG_  102
 #define _YDIAG_  202
 #define _ZDIAG_  302
-#define _IDIAG_  502
-#define _JDIAG_  602
-#define _KDIAG_  702
+#define _IDIAG_  402
+#define _JDIAG_  502
+#define _KDIAG_  602
+#define _MDIAG_  702   /**SG**/
+
 #define _E0DIAG_ 400
 #define _E1DIAG_ 401
 #define _E2DIAG_ 402

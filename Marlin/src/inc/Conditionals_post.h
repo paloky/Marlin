@@ -87,6 +87,9 @@
 #ifndef AXIS6_NAME
   #define AXIS6_NAME 'C'
 #endif
+#ifndef AXIS7_NAME    /**SG**/
+  #define AXIS7_NAME 'U'  
+#endif
 
 #define X_MAX_LENGTH (X_MAX_POS - (X_MIN_POS))
 #define Y_MAX_LENGTH (Y_MAX_POS - (Y_MIN_POS))
@@ -99,6 +102,9 @@
 #endif
 #if LINEAR_AXES >= 6
   #define K_MAX_LENGTH (K_MAX_POS - (K_MIN_POS))
+#endif
+#if LINEAR_AXES >= 7    /**SG**/
+  #define M_MAX_LENGTH (M_MAX_POS - (M_MIN_POS))
 #endif
 
 // Defined only if the sanity-check is bypassed
@@ -116,6 +122,9 @@
 #endif
 #if LINEAR_AXES >= 6 && !defined(K_BED_SIZE)
   #define K_BED_SIZE K_MAX_LENGTH
+#endif
+#if LINEAR_AXES >= 7 && !defined(M_BED_SIZE)    /**SG**/
+  #define M_BED_SIZE M_MAX_LENGTH
 #endif
 
 // Require 0,0 bed center for Delta and SCARA
@@ -135,6 +144,9 @@
 #if LINEAR_AXES >= 6
   #define _K_HALF_KMAX ((K_BED_SIZE) / 2)
 #endif
+#if LINEAR_AXES >= 7    /**SG**/
+  #define _M_HALF_MMAX ((M_BED_SIZE) / 2)
+#endif
 
 #define X_CENTER TERN(BED_CENTER_AT_0_0, 0, _X_HALF_BED)
 #define Y_CENTER TERN(BED_CENTER_AT_0_0, 0, _Y_HALF_BED)
@@ -147,6 +159,9 @@
 #endif
 #if LINEAR_AXES >= 6
   #define K_CENTER TERN(BED_CENTER_AT_0_0, 0, _K_HALF_BED)
+#endif
+#if LINEAR_AXES >= 7    /**SG**/
+  #define M_CENTER TERN(BED_CENTER_AT_0_0, 0, _M_HALF_BED)
 #endif
 
 // Get the linear boundaries of the bed
@@ -165,6 +180,10 @@
 #if LINEAR_AXES >= 6
   #define K_MINIM (K_CENTER - _K_HALF_BED_SIZE)
   #define K_MAXIM (K_MINIM + K_BED_SIZE)
+#endif
+#if LINEAR_AXES >= 7    /**SG**/
+  #define M_MINIM (M_CENTER - _M_HALF_BED_SIZE)
+  #define M_MAXIM (M_MINIM + M_BED_SIZE)
 #endif
 
 /**
@@ -256,6 +275,13 @@
     #define K_HOME_POS MANUAL_K_HOME_POS
   #else
     #define K_HOME_POS (K_HOME_DIR < 0 ? K_MIN_POS : K_MAX_POS)
+  #endif
+#endif
+#if LINEAR_AXES >= 7    /**SG**/
+  #ifdef MANUAL_M_HOME_POS
+    #define M_HOME_POS MANUAL_M_HOME_POS
+  #else
+    #define M_HOME_POS (M_HOME_DIR < 0 ? M_MIN_POS : M_MAX_POS)
   #endif
 #endif
 
@@ -454,6 +480,9 @@
 #endif
 #if LINEAR_AXES >= 6 && !defined(DISABLE_INACTIVE_K)
   #define DISABLE_INACTIVE_K DISABLE_K
+#endif
+#if LINEAR_AXES >= 7 && !defined(DISABLE_INACTIVE_M)    /**SG**/
+  #define DISABLE_INACTIVE_M DISABLE_M
 #endif
 
 /**
@@ -1378,6 +1407,10 @@
   #if ENABLED(USE_KMAX_PLUG)
     #define ENDSTOPPULLUP_KMAX
   #endif
+  #if ENABLED(USE_MMAX_PLUG)   /**SG**/
+    #define ENDSTOPPULLUP_MMAX
+  #endif
+
   #if ENABLED(USE_XMIN_PLUG)
     #define ENDSTOPPULLUP_XMIN
   #endif
@@ -1395,6 +1428,9 @@
   #endif
   #if ENABLED(USE_KMIN_PLUG)
     #define ENDSTOPPULLUP_KMIN
+  #endif
+  #if ENABLED(USE_MMIN_PLUG)    /**SG**/
+    #define ENDSTOPPULLUP_MMIN
   #endif
 #endif
 
@@ -1575,6 +1611,22 @@
     #define HAS_K_MS_PINS 1
   #endif
 #endif
+
+#if LINEAR_AXES >= 7    /**SG**/
+  #if PIN_EXISTS(M_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(M))
+    #define HAS_M_ENABLE 1
+  #endif
+  #if PIN_EXISTS(M_DIR)
+    #define HAS_M_DIR 1
+  #endif
+  #if PIN_EXISTS(M_STEP)
+    #define HAS_M_STEP 1
+  #endif
+  #if PIN_EXISTS(M_MS1)
+    #define HAS_M_MS_PINS 1
+  #endif
+#endif
+
 
 // Extruder steppers and solenoids
 #if PIN_EXISTS(E0_ENABLE) || (ENABLED(SOFTWARE_DRIVER_ENABLE) && AXIS_IS_TMC(E0))
@@ -1791,6 +1843,12 @@
       #define K_INTERPOLATE INTERPOLATE
     #endif
   #endif
+   #if LINEAR_AXES >= 7   /**SG**/
+    #ifndef M_INTERPOLATE
+      #define M_INTERPOLATE INTERPOLATE
+    #endif
+  #endif
+
   #ifndef E0_INTERPOLATE
     #define E0_INTERPOLATE INTERPOLATE
   #endif
@@ -1966,6 +2024,16 @@
 #if _HAS_STOP(K,MAX)
   #define HAS_K_MAX 1
 #endif
+
+/**SG**/
+#if _HAS_STOP(M,MIN)
+  #define HAS_M_MIN 1
+#endif
+#if _HAS_STOP(M,MAX)
+  #define HAS_M_MAX 1
+#endif
+
+
 #if HAS_CUSTOM_PROBE_PIN && PIN_EXISTS(Z_MIN_PROBE)
   #define HAS_Z_MIN_PROBE_PIN 1
 #endif
@@ -2261,7 +2329,7 @@
 #if PIN_EXISTS(DIGIPOTSS)
   #define HAS_MOTOR_CURRENT_SPI 1
 #endif
-#if ANY_PIN(MOTOR_CURRENT_PWM_X, MOTOR_CURRENT_PWM_Y, MOTOR_CURRENT_PWM_XY, MOTOR_CURRENT_PWM_Z, MOTOR_CURRENT_PWM_I, MOTOR_CURRENT_PWM_J, MOTOR_CURRENT_PWM_K, MOTOR_CURRENT_PWM_E)
+#if ANY_PIN(MOTOR_CURRENT_PWM_X, MOTOR_CURRENT_PWM_Y, MOTOR_CURRENT_PWM_XY, MOTOR_CURRENT_PWM_Z, MOTOR_CURRENT_PWM_I, MOTOR_CURRENT_PWM_J, MOTOR_CURRENT_PWM_K, MOTOR_CURRENT_PWM_M, MOTOR_CURRENT_PWM_E)  /**SG**/
   #define HAS_MOTOR_CURRENT_PWM 1
 #endif
 
@@ -2271,7 +2339,7 @@
 #if ANY(HAS_E0_MS_PINS, HAS_E1_MS_PINS, HAS_E2_MS_PINS, HAS_E3_MS_PINS, HAS_E4_MS_PINS, HAS_E5_MS_PINS, HAS_E6_MS_PINS, HAS_E7_MS_PINS)
   #define HAS_SOME_E_MS_PINS 1
 #endif
-#if ANY(HAS_X_MS_PINS, HAS_X2_MS_PINS, HAS_Y_MS_PINS, HAS_Y2_MS_PINS, HAS_SOME_Z_MS_PINS, HAS_I_MS_PINS, HAS_J_MS_PINS, HAS_K_MS_PINS, HAS_SOME_E_MS_PINS)
+#if ANY(HAS_X_MS_PINS, HAS_X2_MS_PINS, HAS_Y_MS_PINS, HAS_Y2_MS_PINS, HAS_SOME_Z_MS_PINS, HAS_I_MS_PINS, HAS_J_MS_PINS, HAS_K_MS_PINS, HAS_M_MS_PINS, HAS_SOME_E_MS_PINS)  /**SG**/
   #define HAS_MICROSTEPS 1
 #endif
 

@@ -211,7 +211,7 @@
       SERIAL_PRINTLN(data.drv_status, HEX);
       if (data.is_ot) SERIAL_ECHOLNPGM("overtemperature");
       if (data.is_s2g) SERIAL_ECHOLNPGM("coil short circuit");
-      TERN_(TMC_DEBUG, tmc_report_all(LIST_N(LINEAR_AXES, true, true, true, true, true, true), true));
+      TERN_(TMC_DEBUG, tmc_report_all(LIST_N(LINEAR_AXES, true, true, true, true, true, true, true), true));   /**SG**/
       kill(PSTR("Driver error"));
     }
   #endif
@@ -430,6 +430,12 @@
       #if AXIS_IS_TMC(K)
         if (monitor_tmc_driver(stepperK, need_update_error_counters, need_debug_reporting))
           step_current_down(stepperK);
+      #endif
+
+      /**SG**/
+      #if AXIS_IS_TMC(M)
+        if (monitor_tmc_driver(stepperM, need_update_error_counters, need_debug_reporting))
+          step_current_down(stepperM);
       #endif
 
       #if AXIS_IS_TMC(E0)
@@ -774,7 +780,7 @@
 
   static void tmc_debug_loop(
     const TMC_debug_enum i,
-    LIST_N(LINEAR_AXES, const bool print_x, const bool print_y, const bool print_z, const bool print_i, const bool print_j, const bool print_k),
+    LIST_N(LINEAR_AXES, const bool print_x, const bool print_y, const bool print_z, const bool print_i, const bool print_j, const bool print_k, const bool print_m),  /**SG**/
     const bool print_e
   ) {
     if (print_x) {
@@ -820,6 +826,11 @@
       if (print_k) tmc_status(stepperK, i);
     #endif
 
+    /**SG**/
+    #if AXIS_IS_TMC(M)
+      if (print_m) tmc_status(stepperM, i);
+    #endif
+
     if (print_e) {
       #if AXIS_IS_TMC(E0)
         tmc_status(stepperE0, i);
@@ -852,7 +863,7 @@
 
   static void drv_status_loop(
     const TMC_drv_status_enum i,
-    LIST_N(LINEAR_AXES, const bool print_x, const bool print_y, const bool print_z, const bool print_i, const bool print_j, const bool print_k),
+    LIST_N(LINEAR_AXES, const bool print_x, const bool print_y, const bool print_z, const bool print_i, const bool print_j, const bool print_k, const bool print_m),  /**SG**/ 
     const bool print_e
   ) {
     if (print_x) {
@@ -898,6 +909,11 @@
       if (print_k) tmc_parse_drv_status(stepperK, i);
     #endif
 
+    /**SG**/
+    #if AXIS_IS_TMC(M)
+      if (print_m) tmc_parse_drv_status(stepperM, i);
+    #endif
+
     if (print_e) {
       #if AXIS_IS_TMC(E0)
         tmc_parse_drv_status(stepperE0, i);
@@ -933,11 +949,11 @@
    */
 
   void tmc_report_all(
-    LIST_N(LINEAR_AXES, const bool print_x, const bool print_y, const bool print_z, const bool print_i, const bool print_j, const bool print_k),
+    LIST_N(LINEAR_AXES, const bool print_x, const bool print_y, const bool print_z, const bool print_i, const bool print_j, const bool print_k, const bool print_m),  /**SG**/
     const bool print_e
   ) {
-    #define TMC_REPORT(LABEL, ITEM) do{ SERIAL_ECHOPGM(LABEL);  tmc_debug_loop(ITEM, LIST_N(LINEAR_AXES, print_x, print_y, print_z, print_i, print_j, print_k), print_e); }while(0)
-    #define DRV_REPORT(LABEL, ITEM) do{ SERIAL_ECHOPGM(LABEL); drv_status_loop(ITEM, LIST_N(LINEAR_AXES, print_x, print_y, print_z, print_i, print_j, print_k), print_e); }while(0)
+    #define TMC_REPORT(LABEL, ITEM) do{ SERIAL_ECHOPGM(LABEL);  tmc_debug_loop(ITEM, LIST_N(LINEAR_AXES, print_x, print_y, print_z, print_i, print_j, print_k, print_m), print_e); }while(0)  /**SG**/
+    #define DRV_REPORT(LABEL, ITEM) do{ SERIAL_ECHOPGM(LABEL); drv_status_loop(ITEM, LIST_N(LINEAR_AXES, print_x, print_y, print_z, print_i, print_j, print_k, print_m), print_e); }while(0)  /**SG**/
 
     TMC_REPORT("\t",                 TMC_CODES);
     #if HAS_DRIVER(TMC2209)
@@ -1064,7 +1080,7 @@
 
   static void tmc_get_registers(
     TMC_get_registers_enum i,
-    LIST_N(LINEAR_AXES, const bool print_x, const bool print_y, const bool print_z, const bool print_i, const bool print_j, const bool print_k),
+    LIST_N(LINEAR_AXES, const bool print_x, const bool print_y, const bool print_z, const bool print_i, const bool print_j, const bool print_k, const bool print_m),   /**SG**/
     const bool print_e
   ) {
     if (print_x) {
@@ -1110,6 +1126,11 @@
       if (print_k) tmc_get_registers(stepperK, i);
     #endif
 
+    /**SG**/
+    #if AXIS_IS_TMC(M)
+      if (print_m) tmc_get_registers(stepperM, i);
+    #endif
+
     if (print_e) {
       #if AXIS_IS_TMC(E0)
         tmc_get_registers(stepperE0, i);
@@ -1141,10 +1162,10 @@
   }
 
   void tmc_get_registers(
-    LIST_N(LINEAR_AXES, bool print_x, bool print_y, bool print_z, bool print_i, bool print_j, bool print_k),
+    LIST_N(LINEAR_AXES, bool print_x, bool print_y, bool print_z, bool print_i, bool print_j, bool print_k, bool print_m),   /**SG**/
     bool print_e
   ) {
-    #define _TMC_GET_REG(LABEL, ITEM) do{ SERIAL_ECHOPGM(LABEL); tmc_get_registers(ITEM, LIST_N(LINEAR_AXES, print_x, print_y, print_z, print_i, print_j, print_k), print_e); }while(0)
+    #define _TMC_GET_REG(LABEL, ITEM) do{ SERIAL_ECHOPGM(LABEL); tmc_get_registers(ITEM, LIST_N(LINEAR_AXES, print_x, print_y, print_z, print_i, print_j, print_k, print_m), print_e); }while(0)  /**SG**/
     #define TMC_GET_REG(NAME, TABS) _TMC_GET_REG(STRINGIFY(NAME) TABS, TMC_GET_##NAME)
     _TMC_GET_REG("\t", TMC_AXIS_CODES);
     TMC_GET_REG(GCONF, "\t\t");
@@ -1238,6 +1259,11 @@
     #if AXIS_HAS_SPI(K)
       SET_CS_PIN(K);
     #endif
+    /**SG**/
+    #if AXIS_HAS_SPI(M)
+      SET_CS_PIN(M);
+    #endif
+
     #if AXIS_HAS_SPI(E0)
       SET_CS_PIN(E0);
     #endif
@@ -1288,7 +1314,7 @@ static bool test_connection(TMC &st) {
 }
 
 void test_tmc_connection(
-  LIST_N(LINEAR_AXES, const bool test_x, const bool test_y, const bool test_z, const bool test_i, const bool test_j, const bool test_k),
+  LIST_N(LINEAR_AXES, const bool test_x, const bool test_y, const bool test_z, const bool test_i, const bool test_j, const bool test_k, const bool test_m),  /**SG**/
   const bool test_e
 ) {
   uint8_t axis_connection = 0;
@@ -1334,6 +1360,11 @@ void test_tmc_connection(
   #endif
   #if AXIS_IS_TMC(K)
     if (test_k) axis_connection += test_connection(stepperK);
+  #endif
+
+  /**SG**/  
+  #if AXIS_IS_TMC(M)
+    if (test_m) axis_connection += test_connection(stepperM);
   #endif
 
   if (test_e) {

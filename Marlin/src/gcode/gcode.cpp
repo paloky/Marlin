@@ -70,19 +70,29 @@ millis_t GcodeSuite::previous_move_ms = 0,
 
 // Relative motion mode for each logical axis
 static constexpr xyze_bool_t ar_init = ARRAY_N(NUM_AXIS, AXIS_RELATIVE_MODES);
+
 uint8_t GcodeSuite::axis_relative = (
     (ar_init.x ? _BV(REL_X) : 0)
   | (ar_init.y ? _BV(REL_Y) : 0)
   | (ar_init.z ? _BV(REL_Z) : 0)
+
   #if LINEAR_AXES >= 4
     | (ar_init.i ? _BV(REL_I) : 0)
   #endif
+
   #if LINEAR_AXES >= 5
     | (ar_init.j ? _BV(REL_J) : 0)
   #endif
+
   #if LINEAR_AXES >= 6
     | (ar_init.k ? _BV(REL_K) : 0)
   #endif
+
+  /**SG**/
+  #if LINEAR_AXES >= 7    
+    | (ar_init.m ? _BV(REL_M) : 0)
+  #endif
+
   | (ar_init.e ? _BV(REL_E) : 0)
 );
 
@@ -153,6 +163,9 @@ void GcodeSuite::get_destination_from_command() {
       , false
     #endif
     #if LINEAR_AXES >= 6
+      , false
+    #endif
+    #if LINEAR_AXES >= 7   /**SG**/
       , false
     #endif
   };

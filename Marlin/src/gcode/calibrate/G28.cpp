@@ -318,7 +318,8 @@ void GcodeSuite::G28() {
                  needZ = false, // UNUSED
                  needI = _UNSAFE(I),
                  needJ = _UNSAFE(J),
-                 needK = _UNSAFE(K)
+                 needK = _UNSAFE(K),
+                 needM = _UNSAFE(M)   /**SG**/
                ),
                // Home each axis if needed or flagged
                homeX = needX || parser.seen('X'),
@@ -332,6 +333,9 @@ void GcodeSuite::G28() {
                #if LINEAR_AXES >= 6
                  homeK = needK || parser.seen(AXIS6_NAME),
                #endif
+               #if LINEAR_AXES >= 7   /**SG**/
+                 homeM = needM || parser.seen(AXIS7_NAME),
+               #endif
                // Home-all if all or none are flagged
                home_all = true GANG_N(LINEAR_AXES,
                  && homeX == homeX,
@@ -339,7 +343,8 @@ void GcodeSuite::G28() {
                  && homeX == homeZ,
                  && homeX == homeI,
                  && homeX == homeJ,
-                 && homeX == homeK
+                 && homeX == homeK,
+                 && homeX == homeM  /**SG**/
                ),
                LIST_N(LINEAR_AXES,
                  doX = home_all || homeX,
@@ -347,7 +352,8 @@ void GcodeSuite::G28() {
                  doZ = home_all || homeZ,
                  doI = home_all || homeI,
                  doJ = home_all || homeJ,
-                 doK = home_all || homeK
+                 doK = home_all || homeK,
+                 doM = home_all || homeM    /**SG**/
                );
 
     UNUSED(needZ);
@@ -371,6 +377,9 @@ void GcodeSuite::G28() {
         #endif
         #if LINEAR_AXES >= 6
           || doK
+        #endif
+        #if LINEAR_AXES >= 7    /**SG**/
+          || doM
         #endif
         || TERN0(Z_SAFE_HOMING, doZ)
       )
@@ -444,6 +453,9 @@ void GcodeSuite::G28() {
     #endif
     #if LINEAR_AXES >= 6
       if (doK) homeaxis(K_AXIS);
+    #endif
+    #if LINEAR_AXES >= 7    /**SG**/
+      if (doM) homeaxis(M_AXIS);
     #endif
 
     sync_plan_position();
@@ -525,6 +537,9 @@ void GcodeSuite::G28() {
     #endif
     #if HAS_CURRENT_HOME(K)
       stepperK.rms_current(tmc_save_current_K);
+    #endif
+    #if HAS_CURRENT_HOME(M)   /**SG**/
+      stepperM.rms_current(tmc_save_current_M);
     #endif
   #endif // HAS_HOMING_CURRENT
 

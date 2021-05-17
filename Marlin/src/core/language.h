@@ -264,6 +264,7 @@
 #define STR_I AXIS4_STR
 #define STR_J AXIS5_STR
 #define STR_K AXIS6_STR
+#define STR_M AXIS7_STR /**SG**/
 #define STR_E "E"
 #if IS_KINEMATIC
   #define STR_A "A"
@@ -286,6 +287,7 @@
 #define LCD_STR_I STR_I
 #define LCD_STR_J STR_J
 #define LCD_STR_K STR_K
+#define LCD_STR_M STR_M   /**SG**/
 #define LCD_STR_E STR_E
 
 // Endstop Names
@@ -408,6 +410,42 @@
 #else
   #define AXIS6_STR   ""
 #endif
+
+
+#if LINEAR_AXES >= 7
+  #if AXIS7_NAME == 'A'
+    #define AXIS7_STR "A"
+    #define STR_M_MIN "a_min"
+    #define STR_M_MAX "a_max"
+  #elif AXIS7_NAME == 'B'
+    #define AXIS7_STR "B"
+    #define STR_M_MIN "b_min"
+    #define STR_M_MAX "b_max"
+  #elif AXIS7_NAME == 'C'
+    #define AXIS7_STR "C"
+    #define STR_M_MIN "c_min"
+    #define STR_M_MAX "c_max"
+  #elif AXIS7_NAME == 'U'
+    #define AXIS7_STR "U"
+    #define STR_M_MIN "u_min"
+    #define STR_M_MAX "u_max"
+  #elif AXIS7_NAME == 'V'
+    #define AXIS7_STR "V"
+    #define STR_M_MIN "v_min"
+    #define STR_M_MAX "v_max"
+  #elif AXIS7_NAME == 'W'
+    #define AXIS7_STR "W"
+    #define STR_M_MIN "w_min"
+    #define STR_M_MAX "w_max"
+  #else
+    #define AXIS7_STR "M"
+    #define STR_M_MIN "m_min"
+    #define STR_M_MAX "m_max"
+  #endif
+#else
+  #define AXIS7_STR   ""
+#endif
+
 
 #if EITHER(HAS_MARLINUI_HD44780, IS_TFTGLCD_PANEL)
 

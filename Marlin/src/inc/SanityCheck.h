@@ -683,6 +683,8 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
   #error "Enable only one of ENDSTOPPULLUP_J_MIN or ENDSTOPPULLDOWN_J_MIN."
 #elif BOTH(ENDSTOPPULLUP_KMIN, ENDSTOPPULLDOWN_KMIN)
   #error "Enable only one of ENDSTOPPULLUP_K_MIN or ENDSTOPPULLDOWN_K_MIN."
+  #elif BOTH(ENDSTOPPULLUP_MMIN, ENDSTOPPULLDOWN_MMIN)  /**SG**/
+  #error "Enable only one of ENDSTOPPULLUP_M_MIN or ENDSTOPPULLDOWN_M_MIN."
 #endif
 
 /**
@@ -1243,6 +1245,13 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
     #error "AXIS6_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
   #endif
 #endif
+#if LINEAR_AXES >= 7    /**SG**/
+  #if AXIS7_NAME == AXIS6_NAME || AXIS7_NAME == AXIS5_NAME || AXIS7_NAME == AXIS4_NAME
+    #error "AXIS7_NAME must be different from AXIS6_NAME, AXIS5_NAME and AXIS4_NAME."
+  #elif AXIS7_NAME != 'A' && AXIS7_NAME != 'B' && AXIS7_NAME != 'C' && AXIS7_NAME != 'U' && AXIS7_NAME != 'V' && AXIS7_NAME != 'W'
+    #error "AXIS7_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
+  #endif
+#endif
 
 /**
  * SAVED_POSITIONS is not supported with LINEARS_AXES > 3
@@ -1593,6 +1602,9 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
 #endif
 #if LINEAR_AXES >= 6
   static_assert(hbm[K_AXIS] >= 0, "HOMING_BUMP_MM.K must be greater than or equal to 0.");
+#endif
+#if LINEAR_AXES >= 7  /**SG**/
+  static_assert(hbm[M_AXIS] >= 0, "HOMING_BUMP_MM.M must be greater than or equal to 0.");
 #endif
 #if ENABLED(CODEPENDENT_XY_HOMING)
   #if ENABLED(QUICK_HOME)
@@ -2059,7 +2071,9 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
 #define _PLUG_UNUSED_TEST(A,P) (DISABLED(USE_##P##MIN_PLUG, USE_##P##MAX_PLUG) \
   && !(ENABLED(A##_DUAL_ENDSTOPS) && WITHIN(A##2_USE_ENDSTOP, _##P##MAX_, _##P##MIN_)) \
   && !(ENABLED(A##_MULTI_ENDSTOPS) && WITHIN(A##2_USE_ENDSTOP, _##P##MAX_, _##P##MIN_)) )
-#if LINEAR_AXES == 6
+#if LINEAR_AXES == 7    /**SG**/
+  #define _AXIS_PLUG_UNUSED_TEST(A) (_PLUG_UNUSED_TEST(A,X) && _PLUG_UNUSED_TEST(A,Y) && _PLUG_UNUSED_TEST(A,Z) && _PLUG_UNUSED_TEST(A,I) && _PLUG_UNUSED_TEST(A,J) && _PLUG_UNUSED_TEST(A,K) && _PLUG_UNUSED_TEST(A,M))  /**SG**/
+#elif LINEAR_AXES == 6
   #define _AXIS_PLUG_UNUSED_TEST(A) (_PLUG_UNUSED_TEST(A,X) && _PLUG_UNUSED_TEST(A,Y) && _PLUG_UNUSED_TEST(A,Z) && _PLUG_UNUSED_TEST(A,I) && _PLUG_UNUSED_TEST(A,J) && _PLUG_UNUSED_TEST(A,K))
 #elif LINEAR_AXES == 5
   #define _AXIS_PLUG_UNUSED_TEST(A) (_PLUG_UNUSED_TEST(A,X) && _PLUG_UNUSED_TEST(A,Y) && _PLUG_UNUSED_TEST(A,Z) && _PLUG_UNUSED_TEST(A,I) && _PLUG_UNUSED_TEST(A,J))
@@ -2094,6 +2108,11 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
     #error "You must enable USE_KMIN_PLUG or USE_KMAX_PLUG."
   #endif
 #endif
+#if LINEAR_AXES >= 7  /**SG**/
+  #if _AXIS_PLUG_UNUSED_TEST(M)
+    #error "You must enable USE_MMIN_PLUG or USE_MMAX_PLUG."
+  #endif
+#endif
 
 // Delta and Cartesian use 3 homing endstops
 #if NONE(IS_SCARA, SPI_ENDSTOPS)
@@ -2112,12 +2131,19 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #elif LINEAR_AXES >= 5 && J_HOME_DIR < 0 && DISABLED(USE_JMIN_PLUG)
     #error "Enable USE_JMIN_PLUG when homing J to MIN."
   #elif LINEAR_AXES >= 5 && J_HOME_DIR > 0 && DISABLED(USE_JMAX_PLUG)
-    #error "Enable USE_JMAX_PLUG when homing J to MAX."
+    #error "Enable USE_JMAX_PLUG when homing J to MAX."  
   #elif LINEAR_AXES >= 6 && K_HOME_DIR < 0 && DISABLED(USE_KMIN_PLUG)
     #error "Enable USE_KMIN_PLUG when homing K to MIN."
   #elif LINEAR_AXES >= 6 && K_HOME_DIR > 0 && DISABLED(USE_KMAX_PLUG)
     #error "Enable USE_KMAX_PLUG when homing K to MAX."
+
+  /**SG**/
+  #elif LINEAR_AXES >= 7 && M_HOME_DIR < 0 && DISABLED(USE_MMIN_PLUG)
+    #error "Enable USE_MMIN_PLUG when homing M to MIN."
+  #elif LINEAR_AXES >= 7 && M_HOME_DIR > 0 && DISABLED(USE_MMAX_PLUG)
+    #error "Enable USE_MMAX_PLUG when homing M to MAX."
   #endif
+
 #endif // !IS_SCARA
 
 // Z homing direction and plug usage flags
@@ -2559,6 +2585,8 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #error "An SPI driven TMC on J requires J_CS_PIN."
 #elif INVALID_TMC_SPI(K)
   #error "An SPI driven TMC on K requires K_CS_PIN."
+#elif INVALID_TMC_SPI(M)      /**SG**/
+  #error "An SPI driven TMC on M requires M_CS_PIN."
 #endif
 #undef INVALID_TMC_SPI
 
@@ -2604,6 +2632,8 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #error "TMC2208 or TMC2209 on J requires J_HARDWARE_SERIAL or J_SERIAL_(RX|TX)_PIN."
 #elif LINEAR_AXES >= 6 && INVALID_TMC_UART(K)
   #error "TMC2208 or TMC2209 on K requires K_HARDWARE_SERIAL or K_SERIAL_(RX|TX)_PIN."
+#elif LINEAR_AXES >= 7 && INVALID_TMC_UART(M)   /**SG**/
+  #error "TMC2208 or TMC2209 on M requires M_HARDWARE_SERIAL or M_SERIAL_(RX|TX)_PIN."
 #endif
 #undef INVALID_TMC_UART
 
@@ -2688,6 +2718,8 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   INVALID_TMC_MS(J)
 #elif LINEAR_AXES >= 6 && !TMC_MICROSTEP_IS_VALID(K)
   INVALID_TMC_MS(K)
+#elif LINEAR_AXES >= 7 && !TMC_MICROSTEP_IS_VALID(M)  /**SG**/
+  INVALID_TMC_MS(M)
 #endif
 #undef INVALID_TMC_MS
 #undef TMC_MICROSTEP_IS_VALID
@@ -2717,6 +2749,9 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #if LINEAR_AXES >= 6
     #define K_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(K,TMC2209)
   #endif
+  #if LINEAR_AXES >= 7  /**SG**/
+    #define M_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(M,TMC2209)
+  #endif
 
   #if NONE(SPI_ENDSTOPS, ONBOARD_ENDSTOPPULLUPS, ENDSTOPPULLUPS)
     #if   X_SENSORLESS && X_HOME_DIR < 0 && DISABLED(ENDSTOPPULLUP_XMIN)
@@ -2737,6 +2772,9 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
       #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_JMAX (or ENDSTOPPULLUPS) when homing to J_MAX."
     #elif LINEAR_AXES >= 6 && K_SENSORLESS && K_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_KMAX)
       #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_KMAX (or ENDSTOPPULLUPS) when homing to K_MAX."
+
+    #elif LINEAR_AXES >= 7 && M_SENSORLESS && M_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_MMAX)  /**SG**/
+      #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_MMAX (or ENDSTOPPULLUPS) when homing to M_MAX."
     #endif
   #endif
 
@@ -2817,6 +2855,20 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
       #else
         #error "SENSORLESS_HOMING requires K_MAX_ENDSTOP_INVERTING = false when homing TMC2209 to K_MAX."
       #endif
+
+    /**SG**/
+    #elif LINEAR_AXES >= 7 && M_SENSORLESS && M_HOME_DIR < 0 && M_MIN_ENDSTOP_INVERTING != M_ENDSTOP_INVERTING
+      #if M_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires M_MIN_ENDSTOP_INVERTING = true when homing to M_MIN."
+      #else
+        #error "SENSORLESS_HOMING requires M_MIN_ENDSTOP_INVERTING = false when homing TMC2209 to M_MIN."
+      #endif
+    #elif LINEAR_AXES >= 7 && M_SENSORLESS && M_HOME_DIR > 0 && M_MAX_ENDSTOP_INVERTING != M_ENDSTOP_INVERTING
+      #if M_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires M_MAX_ENDSTOP_INVERTING = true when homing to M_MAX."
+      #else
+        #error "SENSORLESS_HOMING requires M_MAX_ENDSTOP_INVERTING = false when homing TMC2209 to M_MAX."
+      #endif
     #endif
   #endif
 
@@ -2834,6 +2886,7 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #undef I_ENDSTOP_INVERTING
   #undef J_ENDSTOP_INVERTING
   #undef K_ENDSTOP_INVERTING
+  #undef M_ENDSTOP_INVERTING    /**SG**/
 #endif
 
 // Sensorless probing requirements
@@ -3476,6 +3529,11 @@ static_assert(   _ARR_TEST(3,0) && _ARR_TEST(3,1) && _ARR_TEST(3,2)
   #endif
 #endif
 #if LINEAR_AXES >= 6
+  #if _BAD_DRIVER(Z)
+    #error "I_DRIVER_TYPE is not recognized."
+  #endif
+#endif
+#if LINEAR_AXES >= 7    /**SG**/ // Aixo no se se si esta be...  Tots els eixos comproba el Z ??
   #if _BAD_DRIVER(Z)
     #error "I_DRIVER_TYPE is not recognized."
   #endif

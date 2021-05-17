@@ -29,12 +29,15 @@
 #include "../../../module/stepper/indirection.h"
 
 template<typename TMC>
+
 void tmc_say_stealth_status(TMC &st) {
   st.printLabel();
   SERIAL_ECHOPGM(" driver mode:\t");
   serialprintPGM(st.get_stealthChop() ? PSTR("stealthChop") : PSTR("spreadCycle"));
   SERIAL_EOL();
 }
+
+
 template<typename TMC>
 void tmc_set_stealthChop(TMC &st, const bool enable) {
   st.stored.stealthChop_enabled = enable;
@@ -44,14 +47,16 @@ void tmc_set_stealthChop(TMC &st, const bool enable) {
 static void set_stealth_status(const bool enable, const int8_t target_extruder) {
   #define TMC_SET_STEALTH(Q) tmc_set_stealthChop(stepper##Q, enable)
 
+/**SG**/
   #if    AXIS_HAS_STEALTHCHOP(X)  || AXIS_HAS_STEALTHCHOP(X2) \
       || AXIS_HAS_STEALTHCHOP(Y)  || AXIS_HAS_STEALTHCHOP(Y2) \
       || AXIS_HAS_STEALTHCHOP(Z)  || AXIS_HAS_STEALTHCHOP(Z2) \
       || AXIS_HAS_STEALTHCHOP(Z3) || AXIS_HAS_STEALTHCHOP(Z4) \
       || AXIS_HAS_STEALTHCHOP(I)  || AXIS_HAS_STEALTHCHOP(J)  \
-      || AXIS_HAS_STEALTHCHOP(K)
+      || AXIS_HAS_STEALTHCHOP(K)  || AXIS_HAS_STEALTHCHOP(M)      
     const uint8_t index = parser.byteval('I');
   #endif
+  
   LOOP_NUM_AXIS(i) if (parser.seen(axis_codes[i])) {
     switch (i) {
       case X_AXIS:
@@ -93,6 +98,9 @@ static void set_stealth_status(const bool enable, const int8_t target_extruder) 
       #endif
       #if AXIS_HAS_STEALTHCHOP(K)
         case K_AXIS: TMC_SET_STEALTH(K); break;
+      #endif
+      #if AXIS_HAS_STEALTHCHOP(M)
+        case M_AXIS: TMC_SET_STEALTH(M); break;
       #endif
 
       case E_AXIS: {
@@ -164,6 +172,11 @@ static void say_stealth_status() {
   #if AXIS_HAS_STEALTHCHOP(K)
     TMC_SAY_STEALTH_STATUS(K);
   #endif
+  
+  #if AXIS_HAS_STEALTHCHOP(M)   /**SG**/
+    TMC_SAY_STEALTH_STATUS(M);
+  #endif
+
   #if AXIS_HAS_STEALTHCHOP(E0)
     TMC_SAY_STEALTH_STATUS(E0);
   #endif

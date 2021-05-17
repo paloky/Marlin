@@ -228,6 +228,9 @@ void GCodeParser::parse(char *p) {
         #if LINEAR_AXES >= 6
           case AXIS6_NAME:
         #endif
+        #if LINEAR_AXES >= 7  /**SG**/
+          case AXIS7_NAME:
+        #endif
       case 'F':
         if (motion_mode_codenum < 0) return;
         command_letter = 'G';

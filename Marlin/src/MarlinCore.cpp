@@ -245,10 +245,24 @@ PGMSTR(X_LBL,     "X:"); PGMSTR(Y_LBL,     "Y:"); PGMSTR(Z_LBL,     "Z:"); PGMST
 PGMSTR(SP_A_STR, " A");  PGMSTR(SP_B_STR, " B");  PGMSTR(SP_C_STR, " C");
 PGMSTR(SP_X_STR, " X");  PGMSTR(SP_Y_STR, " Y");  PGMSTR(SP_Z_STR, " Z");  PGMSTR(SP_E_STR, " E");
 PGMSTR(SP_X_LBL, " X:"); PGMSTR(SP_Y_LBL, " Y:"); PGMSTR(SP_Z_LBL, " Z:"); PGMSTR(SP_E_LBL, " E:");
-PGMSTR(I_STR, AXIS4_STR);     PGMSTR(J_STR, AXIS5_STR);     PGMSTR(K_STR, AXIS6_STR);
-PGMSTR(I_LBL, AXIS4_STR ":"); PGMSTR(J_LBL, AXIS5_STR ":"); PGMSTR(K_LBL, AXIS6_STR ":");
-PGMSTR(SP_I_STR, " " AXIS4_STR);     PGMSTR(SP_J_STR, " " AXIS5_STR);     PGMSTR(SP_K_STR, " " AXIS6_STR);
-PGMSTR(SP_I_LBL, " " AXIS4_STR ":"); PGMSTR(SP_J_LBL, " " AXIS5_STR ":"); PGMSTR(SP_K_LBL, " " AXIS6_STR ":");
+
+PGMSTR(I_STR, AXIS4_STR); 
+PGMSTR(I_LBL, AXIS4_STR ":");
+PGMSTR(J_STR, AXIS5_STR);
+PGMSTR(J_LBL, AXIS5_STR ":");
+PGMSTR(K_STR, AXIS6_STR); 
+PGMSTR(K_LBL, AXIS6_STR ":");
+PGMSTR(M_STR, AXIS7_STR);     /**SG**/
+PGMSTR(M_LBL, AXIS7_STR ":"); /**SG**/
+
+PGMSTR(SP_I_STR, " " AXIS4_STR); 
+PGMSTR(SP_I_LBL, " " AXIS4_STR ":");
+PGMSTR(SP_J_STR, " " AXIS5_STR);  
+PGMSTR(SP_J_LBL, " " AXIS5_STR ":");
+PGMSTR(SP_K_STR, " " AXIS6_STR); 
+PGMSTR(SP_K_LBL, " " AXIS6_STR ":");
+PGMSTR(SP_M_STR, " " AXIS7_STR);    /**SG**/
+PGMSTR(SP_M_LBL, " " AXIS7_STR ":");  /**SG**/
 
 MarlinState marlin_state = MF_INITIALIZING;
 
@@ -371,6 +385,7 @@ void enable_all_steppers() {
   ENABLE_AXIS_I(); // Marlin 6-axis support: 2019 - 2020 DerAndere (https://github.com/DerAndere1/Marlin/wiki)
   ENABLE_AXIS_J();
   ENABLE_AXIS_K();
+  ENABLE_AXIS_M();   /**SG**/
 
   enable_e_steppers();
 
@@ -397,6 +412,7 @@ void disable_all_steppers() {
   DISABLE_AXIS_I();
   DISABLE_AXIS_J();
   DISABLE_AXIS_K();
+  DISABLE_AXIS_M();    /**SG**/
 
   disable_e_steppers();
 
@@ -557,12 +573,15 @@ inline void manage_inactivity(const bool ignore_stepper_queue=false) {
 
         #if ENABLED(DISABLE_INACTIVE_I)
           DISABLE_AXIS_I();
+        #endif        
+        #if ENABLED(DISABLE_INACTIVE_J)
+          DISABLE_AXIS_J();
         #endif
         #if ENABLED(DISABLE_INACTIVE_K)
           DISABLE_AXIS_K();
         #endif
-        #if ENABLED(DISABLE_INACTIVE_J)
-          DISABLE_AXIS_J();
+        #if ENABLED(DISABLE_INACTIVE_M)   /**SG**/
+          DISABLE_AXIS_M();
         #endif
 
         if (ENABLED(DISABLE_INACTIVE_E)) disable_e_steppers();
@@ -1005,7 +1024,8 @@ void setup() {
   #else
     #define SETUP_LOG(...) NOOP
   #endif
-  #define SETUP_RUN(C) do{ SETUP_LOG(STRINGIFY(C)); C; }while(0)
+  
+  #define SETUP_RUN(C) do{ SETUP_LOG(STRINGIFY(C)); C; } while(0)
 
   #if EITHER(DISABLE_DEBUG, DISABLE_JTAG)
     // Disable any hardware debug to free up pins for IO
@@ -1311,7 +1331,7 @@ void setup() {
   #endif
 
   #if HAS_TRINAMIC_CONFIG && DISABLED(PSU_DEFAULT_OFF)
-    SETUP_RUN(test_tmc_connection(true, LIST_N(LINEAR_AXES, true, true, true, true, true, true)));
+    SETUP_RUN(test_tmc_connection(true, LIST_N(LINEAR_AXES, true, true, true, true, true, true, true)) );  /**SG**/
   #endif
 
   #if HAS_PRUSA_MMU2
