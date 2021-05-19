@@ -64,6 +64,15 @@ void GcodeSuite::M425() {
       #if LINEAR_AXES >= 7    /**SG**/
         case M_AXIS: return AXIS_CAN_CALIBRATE(M);
       #endif
+      #if LINEAR_AXES >= 8    /**SG**/
+        case O_AXIS: return AXIS_CAN_CALIBRATE(O);
+      #endif
+      #if LINEAR_AXES >= 9    /**SG**/
+        case P_AXIS: return AXIS_CAN_CALIBRATE(P);
+      #endif
+      #if LINEAR_AXES >= 10    /**SG**/
+        case Q_AXIS: return AXIS_CAN_CALIBRATE(Q);
+      #endif
     }
   };
 

@@ -311,7 +311,7 @@
 #endif
 
 enum AxisRelative : uint8_t {
-  LIST_N(LINEAR_AXES, REL_X, REL_Y, REL_Z, REL_I, REL_J, REL_K, REL_M),   /**SG**/
+  LIST_N(LINEAR_AXES, REL_X, REL_Y, REL_Z, REL_I, REL_J, REL_K, REL_M, REL_O, REL_P, REL_Q),   /**SG**/
   REL_E, E_MODE_ABS, E_MODE_REL
 };
 

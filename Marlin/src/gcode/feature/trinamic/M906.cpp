@@ -99,6 +99,15 @@ void GcodeSuite::M906() {
       #if AXIS_IS_TMC(M)    /**SG**/
         case M_AXIS: TMC_SET_CURRENT(M); break;
       #endif
+      #if AXIS_IS_TMC(O)    /**SG**/
+        case O_AXIS: TMC_SET_CURRENT(O); break;
+      #endif
+      #if AXIS_IS_TMC(P)    /**SG**/
+        case P_AXIS: TMC_SET_CURRENT(P); break;
+      #endif
+      #if AXIS_IS_TMC(Q)    /**SG**/
+        case Q_AXIS: TMC_SET_CURRENT(Q); break;
+      #endif
 
       case E_AXIS: {
         const int8_t target_extruder = get_target_extruder_from_command();
@@ -167,9 +176,17 @@ void GcodeSuite::M906() {
     #if AXIS_IS_TMC(K)
       TMC_SAY_CURRENT(K);
     #endif
-    
     #if AXIS_IS_TMC(M)    /**SG**/
       TMC_SAY_CURRENT(M);
+    #endif
+    #if AXIS_IS_TMC(O)    /**SG**/
+      TMC_SAY_CURRENT(O);
+    #endif
+    #if AXIS_IS_TMC(P)    /**SG**/
+      TMC_SAY_CURRENT(P);
+    #endif
+    #if AXIS_IS_TMC(Q)    /**SG**/
+      TMC_SAY_CURRENT(Q);
     #endif
 
     #if AXIS_IS_TMC(E0)

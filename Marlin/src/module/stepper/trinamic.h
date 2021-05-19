@@ -50,6 +50,9 @@
 #define TMC_J_LABEL 'J', '0'
 #define TMC_K_LABEL 'K', '0'
 #define TMC_M_LABEL 'M', '0'    /**SG**/
+#define TMC_O_LABEL 'O', '0'    /**SG**/
+#define TMC_P_LABEL 'P', '0'    /**SG**/
+#define TMC_Q_LABEL 'Q', '0'    /**SG**/
 
 #define TMC_X2_LABEL 'X', '2'
 #define TMC_Y2_LABEL 'Y', '2'
@@ -292,6 +295,47 @@ void reset_trinamic_drivers();
   #endif
 #endif
 
+// O Stepper
+#if AXIS_IS_TMC(O)
+  extern TMC_CLASS(O, O) stepperO;
+  static constexpr chopper_timing_t chopper_timing_O = CHOPPER_TIMING_O;
+  #if ENABLED(SOFTWARE_DRIVER_ENABLE)
+    #define O_ENABLE_INIT() NOOP
+    #define O_ENABLE_WRITE(STATE) stepperO.toff((STATE)==O_ENABLE_ON ? chopper_timing_O.toff : 0)
+    #define O_ENABLE_READ() stepperO.isEnabled()
+  #endif
+  #if AXIS_HAS_SQUARE_WAVE(O)
+    #define O_STEP_WRITE(STATE) do{ if(STATE) TOGGLE(O_STEP_PIN); }while(0)
+  #endif
+#endif
+
+// P Stepper
+#if AXIS_IS_TMC(P)
+  extern TMC_CLASS(P, P) stepperP;
+  static constexpr chopper_timing_t chopper_timing_P = CHOPPER_TIMING_P;
+  #if ENABLED(SOFTWARE_DRIVER_ENABLE)
+    #define P_ENABLE_INIT() NOOP
+    #define P_ENABLE_WRITE(STATE) stepperP.toff((STATE)==P_ENABLE_ON ? chopper_timing_P.toff : 0)
+    #define P_ENABLE_READ() stepperP.isEnabled()
+  #endif
+  #if AXIS_HAS_SQUARE_WAVE(P)
+    #define P_STEP_WRITE(STATE) do{ if(STATE) TOGGLE(P_STEP_PIN); }while(0)
+  #endif
+#endif
+
+// Q Stepper
+#if AXIS_IS_TMC(Q)
+  extern TMC_CLASS(Q, Q) stepperQ;
+  static constexpr chopper_timing_t chopper_timing_Q = CHOPPER_TIMING_Q;
+  #if ENABLED(SOFTWARE_DRIVER_ENABLE)
+    #define Q_ENABLE_INIT() NOOP
+    #define Q_ENABLE_WRITE(STATE) stepperQ.toff((STATE)==Q_ENABLE_ON ? chopper_timing_Q.toff : 0)
+    #define Q_ENABLE_READ() stepperQ.isEnabled()
+  #endif
+  #if AXIS_HAS_SQUARE_WAVE(Q)
+    #define Q_STEP_WRITE(STATE) do{ if(STATE) TOGGLE(Q_STEP_PIN); }while(0)
+  #endif
+#endif
 
 // E0 Stepper
 #if AXIS_IS_TMC(E0)

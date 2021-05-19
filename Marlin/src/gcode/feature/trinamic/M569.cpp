@@ -53,7 +53,9 @@ static void set_stealth_status(const bool enable, const int8_t target_extruder) 
       || AXIS_HAS_STEALTHCHOP(Z)  || AXIS_HAS_STEALTHCHOP(Z2) \
       || AXIS_HAS_STEALTHCHOP(Z3) || AXIS_HAS_STEALTHCHOP(Z4) \
       || AXIS_HAS_STEALTHCHOP(I)  || AXIS_HAS_STEALTHCHOP(J)  \
-      || AXIS_HAS_STEALTHCHOP(K)  || AXIS_HAS_STEALTHCHOP(M)      
+      || AXIS_HAS_STEALTHCHOP(K)  || AXIS_HAS_STEALTHCHOP(M)  \
+      || AXIS_HAS_STEALTHCHOP(O)  || AXIS_HAS_STEALTHCHOP(P)  \
+      || AXIS_HAS_STEALTHCHOP(Q)   
     const uint8_t index = parser.byteval('I');
   #endif
   
@@ -172,11 +174,19 @@ static void say_stealth_status() {
   #if AXIS_HAS_STEALTHCHOP(K)
     TMC_SAY_STEALTH_STATUS(K);
   #endif
-  
   #if AXIS_HAS_STEALTHCHOP(M)   /**SG**/
     TMC_SAY_STEALTH_STATUS(M);
   #endif
-
+  #if AXIS_HAS_STEALTHCHOP(O)   /**SG**/
+    TMC_SAY_STEALTH_STATUS(O);
+  #endif
+  #if AXIS_HAS_STEALTHCHOP(P)   /**SG**/
+    TMC_SAY_STEALTH_STATUS(P);
+  #endif
+  #if AXIS_HAS_STEALTHCHOP(Q)   /**SG**/
+    TMC_SAY_STEALTH_STATUS(Q);
+  #endif
+  
   #if AXIS_HAS_STEALTHCHOP(E0)
     TMC_SAY_STEALTH_STATUS(E0);
   #endif

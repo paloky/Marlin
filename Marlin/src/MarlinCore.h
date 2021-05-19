@@ -124,11 +124,11 @@ void protected_pin_err();
 
 extern const char NUL_STR[], M112_KILL_STR[], G28_STR[], M21_STR[], M23_STR[], M24_STR[],
                   SP_A_STR[], SP_B_STR[], SP_C_STR[], SP_E_STR[],                   
-                  SP_P_STR[], SP_T_STR[], SP_X_STR[], SP_Y_STR[], SP_Z_STR[],
+                  SP_P2_STR[], SP_T_STR[], SP_X_STR[], SP_Y_STR[], SP_Z_STR[],
                   E_LBL[], X_LBL[], Y_LBL[], Z_LBL[],                                     
                   SP_X_LBL[], SP_Y_LBL[], SP_Z_LBL[], SP_E_LBL[], 
 
-                  I_LBL[], J_LBL[], K_LBL[], M_LBL[],    /**SG**/
-                  SP_I_STR[], SP_J_STR[], SP_K_STR[], SP_M_STR[],   /**SG**/
-                  SP_I_LBL[], SP_J_LBL[], SP_K_LBL[], SP_M_LBL[];  /**SG**/
+                  I_LBL[], J_LBL[], K_LBL[], M_LBL[], O_LBL[], P_LBL[], Q_LBL[],    /**SG**/
+                  SP_I_STR[], SP_J_STR[], SP_K_STR[], SP_M_STR[], SP_O_STR[], SP_P_STR[], SP_Q_STR[],  /**SG**/
+                  SP_I_LBL[], SP_J_LBL[], SP_K_LBL[], SP_M_LBL[], SP_O_LBL[], SP_P_LBL[], SP_Q_LBL[];  /**SG**/
                   

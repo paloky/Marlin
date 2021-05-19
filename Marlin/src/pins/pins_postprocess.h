@@ -458,6 +458,12 @@
 
   #undef M_MIN_PIN  /**SG**/
   #undef M_MAX_PIN  /**SG**/
+  #undef O_MIN_PIN  /**SG**/
+  #undef O_MAX_PIN  /**SG**/
+  #undef P_MIN_PIN  /**SG**/
+  #undef P_MAX_PIN  /**SG**/
+  #undef Q_MIN_PIN  /**SG**/
+  #undef Q_MAX_PIN  /**SG**/
 #endif
 
 
@@ -499,6 +505,41 @@
   #endif
 #endif
 
+#if LINEAR_AXES >= 8   /**SG**/
+  #ifdef O_STOP_PIN
+    #if O_HOME_DIR < 0
+      #define O_MIN_PIN O_STOP_PIN
+      #define O_MAX_PIN -1
+    #else
+      #define O_MIN_PIN -1
+      #define O_MAX_PIN O_STOP_PIN
+    #endif
+  #endif
+#endif
+
+#if LINEAR_AXES >= 9   /**SG**/
+  #ifdef P_STOP_PIN
+    #if p_HOME_DIR < 0
+      #define P_MIN_PIN P_STOP_PIN
+      #define P_MAX_PIN -1
+    #else
+      #define P_MIN_PIN -1
+      #define P_MAX_PIN P_STOP_PIN
+    #endif
+  #endif
+#endif
+
+#if LINEAR_AXES >= 10   /**SG**/
+  #ifdef Q_STOP_PIN
+    #if Q_OHOME_DIR < 0
+      #define Q_MIN_PIN Q_STOP_PIN
+      #define Q_MAX_PIN -1
+    #else
+      #define Q_MIN_PIN -1
+      #define Q_MAX_PIN Q_STOP_PIN
+    #endif
+  #endif
+#endif
 
 //
 // Disable unused endstop / probe pins
@@ -543,6 +584,18 @@
   #undef M_MAX_PIN
   #define M_MAX_PIN          -1
 #endif
+#if DISABLED(USE_OMAX_PLUG)
+  #undef O_MAX_PIN
+  #define O_MAX_PIN          -1
+#endif
+#if DISABLED(USE_PMAX_PLUG)
+  #undef P_MAX_PIN
+  #define P_MAX_PIN          -1
+#endif
+#if DISABLED(USE_QMAX_PLUG)
+  #undef Q_MAX_PIN
+  #define Q_MAX_PIN          -1
+#endif
 
 
 #if DISABLED(USE_XMIN_PLUG)
@@ -579,6 +632,18 @@
 #if DISABLED(USE_MMIN_PLUG)
   #undef M_MIN_PIN
   #define M_MIN_PIN          -1
+#endif
+#if DISABLED(USE_OMIN_PLUG)
+  #undef O_MIN_PIN
+  #define O_MIN_PIN          -1
+#endif
+#if DISABLED(USE_PMIN_PLUG)
+  #undef P_MIN_PIN
+  #define P_MIN_PIN          -1
+#endif
+#if DISABLED(USE_QMIN_PLUG)
+  #undef Q_MIN_PIN
+  #define Q_MIN_PIN          -1
 #endif
 
 #if HAS_FILAMENT_SENSOR

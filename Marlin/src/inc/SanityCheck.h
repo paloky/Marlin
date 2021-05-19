@@ -683,8 +683,14 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
   #error "Enable only one of ENDSTOPPULLUP_J_MIN or ENDSTOPPULLDOWN_J_MIN."
 #elif BOTH(ENDSTOPPULLUP_KMIN, ENDSTOPPULLDOWN_KMIN)
   #error "Enable only one of ENDSTOPPULLUP_K_MIN or ENDSTOPPULLDOWN_K_MIN."
-  #elif BOTH(ENDSTOPPULLUP_MMIN, ENDSTOPPULLDOWN_MMIN)  /**SG**/
+#elif BOTH(ENDSTOPPULLUP_MMIN, ENDSTOPPULLDOWN_MMIN)  /**SG**/
   #error "Enable only one of ENDSTOPPULLUP_M_MIN or ENDSTOPPULLDOWN_M_MIN."
+#elif BOTH(ENDSTOPPULLUP_OMIN, ENDSTOPPULLDOWN_OMIN)  /**SG**/
+  #error "Enable only one of ENDSTOPPULLUP_O_MIN or ENDSTOPPULLDOWN_O_MIN."
+#elif BOTH(ENDSTOPPULLUP_PMIN, ENDSTOPPULLDOWN_PMIN)  /**SG**/
+  #error "Enable only one of ENDSTOPPULLUP_P_MIN or ENDSTOPPULLDOWN_P_MIN."
+#elif BOTH(ENDSTOPPULLUP_QMIN, ENDSTOPPULLDOWN_QMIN)  /**SG**/
+  #error "Enable only one of ENDSTOPPULLUP_Q_MIN or ENDSTOPPULLDOWN_Q_MIN."
 #endif
 
 /**
@@ -1227,32 +1233,52 @@ static_assert(Y_MAX_LENGTH >= Y_BED_SIZE, "Movement bounds (Y_MIN_POS, Y_MAX_POS
  * Allow only extra axis codes that do not conflict with G-code parameter names
  */
 #if LINEAR_AXES >= 4
-  #if AXIS4_NAME != 'A' && AXIS4_NAME != 'B' && AXIS4_NAME != 'C' && AXIS4_NAME != 'U' && AXIS4_NAME != 'V' && AXIS4_NAME != 'W'
-    #error "AXIS4_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
+  #if AXIS4_NAME != 'A' && AXIS4_NAME != 'B' && AXIS4_NAME != 'C' && AXIS4_NAME != 'D' && AXIS4_NAME != 'U' && AXIS4_NAME != 'V' && AXIS4_NAME != 'W'
+    #error "AXIS4_NAME can only be one of 'A', 'B', 'C', 'D', 'U', 'V', or 'W'."
   #endif
 #endif
 #if LINEAR_AXES >= 5
   #if AXIS5_NAME == AXIS4_NAME || AXIS5_NAME == AXIS6_NAME
     #error "AXIS5_NAME must be different from AXIS4_NAME and AXIS6_NAME"
-  #elif AXIS5_NAME != 'A' && AXIS5_NAME != 'B' && AXIS5_NAME != 'C' && AXIS5_NAME != 'U' && AXIS5_NAME != 'V' && AXIS5_NAME != 'W'
-    #error "AXIS5_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
+  #elif AXIS5_NAME != 'A' && AXIS5_NAME != 'B' && AXIS5_NAME != 'C' && AXIS5_NAME != 'D' && AXIS5_NAME != 'U' && AXIS5_NAME != 'V' && AXIS5_NAME != 'W'
+    #error "AXIS5_NAME can only be one of 'A', 'B', 'C', 'D', 'U', 'V', or 'W'."
   #endif
 #endif
 #if LINEAR_AXES >= 6
   #if AXIS6_NAME == AXIS5_NAME || AXIS6_NAME == AXIS4_NAME
     #error "AXIS6_NAME must be different from AXIS5_NAME and AXIS4_NAME."
-  #elif AXIS6_NAME != 'A' && AXIS6_NAME != 'B' && AXIS6_NAME != 'C' && AXIS6_NAME != 'U' && AXIS6_NAME != 'V' && AXIS6_NAME != 'W'
-    #error "AXIS6_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
+  #elif AXIS6_NAME != 'A' && AXIS6_NAME != 'B' && AXIS6_NAME != 'C' && AXIS6_NAME != 'D' && AXIS6_NAME != 'U' && AXIS6_NAME != 'V' && AXIS6_NAME != 'W'
+    #error "AXIS6_NAME can only be one of 'A', 'B', 'C', 'D', 'U', 'V', or 'W'."
   #endif
 #endif
 #if LINEAR_AXES >= 7    /**SG**/
   #if AXIS7_NAME == AXIS6_NAME || AXIS7_NAME == AXIS5_NAME || AXIS7_NAME == AXIS4_NAME
     #error "AXIS7_NAME must be different from AXIS6_NAME, AXIS5_NAME and AXIS4_NAME."
-  #elif AXIS7_NAME != 'A' && AXIS7_NAME != 'B' && AXIS7_NAME != 'C' && AXIS7_NAME != 'U' && AXIS7_NAME != 'V' && AXIS7_NAME != 'W'
-    #error "AXIS7_NAME can only be one of 'A', 'B', 'C', 'U', 'V', or 'W'."
+  #elif AXIS7_NAME != 'A' && AXIS7_NAME != 'B' && AXIS7_NAME != 'C' && AXIS7_NAME != 'D' && AXIS7_NAME != 'U' && AXIS7_NAME != 'V' && AXIS7_NAME != 'W'
+    #error "AXIS7_NAME can only be one of 'A', 'B', 'C', 'D', 'U', 'V', or 'W'."
   #endif
 #endif
-
+#if LINEAR_AXES >= 8    /**SG**/
+  #if AXIS8_NAME == AXIS7_NAME || AXIS7_NAME == AXIS6_NAME || AXIS7_NAME == AXIS5_NAME || AXIS7_NAME == AXIS4_NAME
+    #error "AXIS8_NAME must be different from AXIS7_NAME, AXIS6_NAME, AXIS5_NAME and AXIS4_NAME."
+  #elif AXIS8_NAME != 'A' && AXIS8_NAME != 'B' && AXIS8_NAME != 'C' && AXIS8_NAME != 'D' && AXIS8_NAME != 'U' && AXIS8_NAME != 'V' && AXIS8_NAME != 'W'
+    #error "AXIS8_NAME can only be one of 'A', 'B', 'C', 'D', 'U', 'V', or 'W'."
+  #endif
+#endif
+#if LINEAR_AXES >= 9    /**SG**/
+  #if AXIS9_NAME == AXIS8_NAME || AXIS8_NAME == AXIS7_NAME || AXIS7_NAME == AXIS6_NAME || AXIS7_NAME == AXIS5_NAME || AXIS7_NAME == AXIS4_NAME
+    #error "AXIS9_NAME must be different from AXIS8_NAME, AXIS7_NAME, AXIS6_NAME, AXIS5_NAME and AXIS4_NAME."
+  #elif AXIS9_NAME != 'A' && AXIS9_NAME != 'B' && AXIS9_NAME != 'C' && AXIS9_NAME != 'D' && AXIS9_NAME != 'U' && AXIS9_NAME != 'V' && AXIS9_NAME != 'W'
+    #error "AXIS9_NAME can only be one of 'A', 'B', 'C', 'D', 'U', 'V', or 'W'."
+  #endif
+#endif
+#if LINEAR_AXES >= 10    /**SG**/
+  #if AXIS10_NAME == AXIS9_NAME || AXIS9_NAME == AXIS8_NAME || AXIS8_NAME == AXIS7_NAME || AXIS7_NAME == AXIS6_NAME || AXIS7_NAME == AXIS5_NAME || AXIS7_NAME == AXIS4_NAME
+    #error "AXIS10_NAME must be different from AXIS9_NAME, AXIS8_NAME, AXIS7_NAME, AXIS6_NAME, AXIS5_NAME and AXIS4_NAME."
+  #elif AXIS10_NAME != 'A' && AXIS10_NAME != 'B' && AXIS10_NAME != 'C' && AXIS10_NAME != 'D' && AXIS10_NAME != 'U' && AXIS10_NAME != 'V' && AXIS10_NAME != 'W'
+    #error "AXIS10_NAME can only be one of 'A', 'B', 'C', 'D', 'U', 'V', or 'W'."
+  #endif
+#endif
 /**
  * SAVED_POSITIONS is not supported with LINEARS_AXES > 3
  */
@@ -1606,6 +1632,16 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
 #if LINEAR_AXES >= 7  /**SG**/
   static_assert(hbm[M_AXIS] >= 0, "HOMING_BUMP_MM.M must be greater than or equal to 0.");
 #endif
+#if LINEAR_AXES >= 8  /**SG**/
+  static_assert(hbm[O_AXIS] >= 0, "HOMING_BUMP_MM.O must be greater than or equal to 0.");
+#endif
+#if LINEAR_AXES >= 9  /**SG**/
+  static_assert(hbm[P_AXIS] >= 0, "HOMING_BUMP_MM.P must be greater than or equal to 0.");
+#endif
+#if LINEAR_AXES >= 10  /**SG**/
+  static_assert(hbm[Q_AXIS] >= 0, "HOMING_BUMP_MM.Q must be greater than or equal to 0.");
+#endif
+
 #if ENABLED(CODEPENDENT_XY_HOMING)
   #if ENABLED(QUICK_HOME)
     #error "QUICK_HOME is incompatible with CODEPENDENT_XY_HOMING."
@@ -2071,7 +2107,13 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
 #define _PLUG_UNUSED_TEST(A,P) (DISABLED(USE_##P##MIN_PLUG, USE_##P##MAX_PLUG) \
   && !(ENABLED(A##_DUAL_ENDSTOPS) && WITHIN(A##2_USE_ENDSTOP, _##P##MAX_, _##P##MIN_)) \
   && !(ENABLED(A##_MULTI_ENDSTOPS) && WITHIN(A##2_USE_ENDSTOP, _##P##MAX_, _##P##MIN_)) )
-#if LINEAR_AXES == 7    /**SG**/
+#if LINEAR_AXES == 10    /**SG**/
+  #define _AXIS_PLUG_UNUSED_TEST(A) (_PLUG_UNUSED_TEST(A,X) && _PLUG_UNUSED_TEST(A,Y) && _PLUG_UNUSED_TEST(A,Z) && _PLUG_UNUSED_TEST(A,I) && _PLUG_UNUSED_TEST(A,J) && _PLUG_UNUSED_TEST(A,K) && _PLUG_UNUSED_TEST(A,M) && _PLUG_UNUSED_TEST(A,O) && _PLUG_UNUSED_TEST(A,P) && _PLUG_UNUSED_TEST(A,Q))  /**SG**/
+#elif LINEAR_AXES == 9    /**SG**/
+  #define _AXIS_PLUG_UNUSED_TEST(A) (_PLUG_UNUSED_TEST(A,X) && _PLUG_UNUSED_TEST(A,Y) && _PLUG_UNUSED_TEST(A,Z) && _PLUG_UNUSED_TEST(A,I) && _PLUG_UNUSED_TEST(A,J) && _PLUG_UNUSED_TEST(A,K) && _PLUG_UNUSED_TEST(A,M) && _PLUG_UNUSED_TEST(A,O) && _PLUG_UNUSED_TEST(A,P))  /**SG**/
+#elif LINEAR_AXES == 8    /**SG**/
+  #define _AXIS_PLUG_UNUSED_TEST(A) (_PLUG_UNUSED_TEST(A,X) && _PLUG_UNUSED_TEST(A,Y) && _PLUG_UNUSED_TEST(A,Z) && _PLUG_UNUSED_TEST(A,I) && _PLUG_UNUSED_TEST(A,J) && _PLUG_UNUSED_TEST(A,K) && _PLUG_UNUSED_TEST(A,M) && _PLUG_UNUSED_TEST(A,O))  /**SG**/
+#elif LINEAR_AXES == 7    /**SG**/
   #define _AXIS_PLUG_UNUSED_TEST(A) (_PLUG_UNUSED_TEST(A,X) && _PLUG_UNUSED_TEST(A,Y) && _PLUG_UNUSED_TEST(A,Z) && _PLUG_UNUSED_TEST(A,I) && _PLUG_UNUSED_TEST(A,J) && _PLUG_UNUSED_TEST(A,K) && _PLUG_UNUSED_TEST(A,M))  /**SG**/
 #elif LINEAR_AXES == 6
   #define _AXIS_PLUG_UNUSED_TEST(A) (_PLUG_UNUSED_TEST(A,X) && _PLUG_UNUSED_TEST(A,Y) && _PLUG_UNUSED_TEST(A,Z) && _PLUG_UNUSED_TEST(A,I) && _PLUG_UNUSED_TEST(A,J) && _PLUG_UNUSED_TEST(A,K))
@@ -2113,6 +2155,21 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
     #error "You must enable USE_MMIN_PLUG or USE_MMAX_PLUG."
   #endif
 #endif
+#if LINEAR_AXES >= 8  /**SG**/
+  #if _AXIS_PLUG_UNUSED_TEST(O)
+    #error "You must enable USE_OMIN_PLUG or USE_OMAX_PLUG."
+  #endif
+#endif
+#if LINEAR_AXES >= 9  /**SG**/
+  #if _AXIS_PLUG_UNUSED_TEST(P)
+    #error "You must enable USE_PMIN_PLUG or USE_PMAX_PLUG."
+  #endif
+#endif
+#if LINEAR_AXES >= 10  /**SG**/
+  #if _AXIS_PLUG_UNUSED_TEST(Q)
+    #error "You must enable USE_QMIN_PLUG or USE_QMAX_PLUG."
+  #endif
+#endif
 
 // Delta and Cartesian use 3 homing endstops
 #if NONE(IS_SCARA, SPI_ENDSTOPS)
@@ -2142,6 +2199,21 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
     #error "Enable USE_MMIN_PLUG when homing M to MIN."
   #elif LINEAR_AXES >= 7 && M_HOME_DIR > 0 && DISABLED(USE_MMAX_PLUG)
     #error "Enable USE_MMAX_PLUG when homing M to MAX."
+  /**SG**/
+  #elif LINEAR_AXES >= 8 && O_HOME_DIR < 0 && DISABLED(USE_OMIN_PLUG)
+    #error "Enable USE_OMIN_PLUG when homing O to MIN."
+  #elif LINEAR_AXES >= 8 && O_HOME_DIR > 0 && DISABLED(USE_OMAX_PLUG)
+    #error "Enable USE_OMAX_PLUG when homing O to MAX."
+    /**SG**/
+  #elif LINEAR_AXES >= 9 && P_HOME_DIR < 0 && DISABLED(USE_PMIN_PLUG)
+    #error "Enable USE_PMIN_PLUG when homing P to MIN."
+  #elif LINEAR_AXES >= 9 && P_HOME_DIR > 0 && DISABLED(USE_PMAX_PLUG)
+    #error "Enable USE_PMAX_PLUG when homing P to MAX."
+    /**SG**/
+  #elif LINEAR_AXES >= 10 && Q_HOME_DIR < 0 && DISABLED(USE_QMIN_PLUG)
+    #error "Enable USE_QMIN_PLUG when homing Q to MIN."
+  #elif LINEAR_AXES >= 10 && Q_HOME_DIR > 0 && DISABLED(USE_QMAX_PLUG)
+    #error "Enable USE_QMAX_PLUG when homing Q to MAX."
   #endif
 
 #endif // !IS_SCARA
@@ -2587,6 +2659,12 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #error "An SPI driven TMC on K requires K_CS_PIN."
 #elif INVALID_TMC_SPI(M)      /**SG**/
   #error "An SPI driven TMC on M requires M_CS_PIN."
+#elif INVALID_TMC_SPI(O)      /**SG**/
+  #error "An SPI driven TMC on O requires O_CS_PIN."
+#elif INVALID_TMC_SPI(P)      /**SG**/
+  #error "An SPI driven TMC on P requires P_CS_PIN."
+#elif INVALID_TMC_SPI(Q)      /**SG**/
+  #error "An SPI driven TMC on Q requires Q_CS_PIN."
 #endif
 #undef INVALID_TMC_SPI
 
@@ -2634,6 +2712,12 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #error "TMC2208 or TMC2209 on K requires K_HARDWARE_SERIAL or K_SERIAL_(RX|TX)_PIN."
 #elif LINEAR_AXES >= 7 && INVALID_TMC_UART(M)   /**SG**/
   #error "TMC2208 or TMC2209 on M requires M_HARDWARE_SERIAL or M_SERIAL_(RX|TX)_PIN."
+#elif LINEAR_AXES >= 8 && INVALID_TMC_UART(O)   /**SG**/
+  #error "TMC2208 or TMC2209 on O requires O_HARDWARE_SERIAL or O_SERIAL_(RX|TX)_PIN."
+#elif LINEAR_AXES >= 9 && INVALID_TMC_UART(P)   /**SG**/
+  #error "TMC2208 or TMC2209 on P requires P_HARDWARE_SERIAL or P_SERIAL_(RX|TX)_PIN."
+#elif LINEAR_AXES >= 10 && INVALID_TMC_UART(Q)   /**SG**/
+  #error "TMC2208 or TMC2209 on Q requires Q_HARDWARE_SERIAL or Q_SERIAL_(RX|TX)_PIN."
 #endif
 #undef INVALID_TMC_UART
 
@@ -2720,6 +2804,12 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   INVALID_TMC_MS(K)
 #elif LINEAR_AXES >= 7 && !TMC_MICROSTEP_IS_VALID(M)  /**SG**/
   INVALID_TMC_MS(M)
+#elif LINEAR_AXES >= 8 && !TMC_MICROSTEP_IS_VALID(O)  /**SG**/
+  INVALID_TMC_MS(O)
+#elif LINEAR_AXES >= 9 && !TMC_MICROSTEP_IS_VALID(P)  /**SG**/
+  INVALID_TMC_MS(P)
+#elif LINEAR_AXES >= 10 && !TMC_MICROSTEP_IS_VALID(Q)  /**SG**/
+  INVALID_TMC_MS(Q)
 #endif
 #undef INVALID_TMC_MS
 #undef TMC_MICROSTEP_IS_VALID
@@ -2752,6 +2842,15 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #if LINEAR_AXES >= 7  /**SG**/
     #define M_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(M,TMC2209)
   #endif
+  #if LINEAR_AXES >= 8  /**SG**/
+    #define O_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(O,TMC2209)
+  #endif
+  #if LINEAR_AXES >= 9  /**SG**/
+    #define P_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(P,TMC2209)
+  #endif
+  #if LINEAR_AXES >= 10  /**SG**/
+    #define Q_ENDSTOP_INVERTING !AXIS_DRIVER_TYPE(Q,TMC2209)
+  #endif
 
   #if NONE(SPI_ENDSTOPS, ONBOARD_ENDSTOPPULLUPS, ENDSTOPPULLUPS)
     #if   X_SENSORLESS && X_HOME_DIR < 0 && DISABLED(ENDSTOPPULLUP_XMIN)
@@ -2775,7 +2874,15 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
 
     #elif LINEAR_AXES >= 7 && M_SENSORLESS && M_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_MMAX)  /**SG**/
       #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_MMAX (or ENDSTOPPULLUPS) when homing to M_MAX."
+    #elif LINEAR_AXES >= 8 && O_SENSORLESS && O_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_OMAX)  /**SG**/
+      #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_OMAX (or ENDSTOPPULLUPS) when homing to O_MAX."
+    #elif LINEAR_AXES >= 9 && P_SENSORLESS && P_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_PMAX)  /**SG**/
+      #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_PMAX (or ENDSTOPPULLUPS) when homing to P_MAX."
+    #elif LINEAR_AXES >= 10 && M_SENSORLESS && Q_HOME_DIR > 0 && DISABLED(ENDSTOPPULLUP_QMAX)  /**SG**/
+      #error "SENSORLESS_HOMING requires ENDSTOPPULLUP_QMAX (or ENDSTOPPULLUPS) when homing to Q_MAX."
+
     #endif
+
   #endif
 
   #if ENABLED(SPI_ENDSTOPS)
@@ -2869,6 +2976,46 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
       #else
         #error "SENSORLESS_HOMING requires M_MAX_ENDSTOP_INVERTING = false when homing TMC2209 to M_MAX."
       #endif
+    /**SG**/
+    #elif LINEAR_AXES >= 8 && O_SENSORLESS && O_HOME_DIR < 0 && O_MIN_ENDSTOP_INVERTING != O_ENDSTOP_INVERTING
+      #if O_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires O_MIN_ENDSTOP_INVERTING = true when homing to O_MIN."
+      #else
+        #error "SENSORLESS_HOMING requires O_MIN_ENDSTOP_INVERTING = false when homing TMC2209 to O_MIN."
+      #endif
+    #elif LINEAR_AXES >= 8 && O_SENSORLESS && O_HOME_DIR > 0 && O_MAX_ENDSTOP_INVERTING != O_ENDSTOP_INVERTING
+      #if O_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires O_MAX_ENDSTOP_INVERTING = true when homing to O_MAX."
+      #else
+        #error "SENSORLESS_HOMING requires O_MAX_ENDSTOP_INVERTING = false when homing TMC2209 to O_MAX."
+      #endif
+    /**SG**/
+    #elif LINEAR_AXES >= 9 && P_SENSORLESS && P_HOME_DIR < 0 && P_MIN_ENDSTOP_INVERTING != P_ENDSTOP_INVERTING
+      #if P_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires P_MIN_ENDSTOP_INVERTING = true when homing to P_MIN."
+      #else
+        #error "SENSORLESS_HOMING requires P_MIN_ENDSTOP_INVERTING = false when homing TMC2209 to P_MIN."
+      #endif
+    #elif LINEAR_AXES >= 9 && P_SENSORLESS && P_HOME_DIR > 0 && P_MAX_ENDSTOP_INVERTING != P_ENDSTOP_INVERTING
+      #if P_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires P_MAX_ENDSTOP_INVERTING = true when homing to P_MAX."
+      #else
+        #error "SENSORLESS_HOMING requires P_MAX_ENDSTOP_INVERTING = false when homing TMC2209 to P_MAX."
+      #endif
+    /**SG**/
+    #elif LINEAR_AXES >= 10 && Q_SENSORLESS && Q_HOME_DIR < 0 && Q_MIN_ENDSTOP_INVERTING != Q_ENDSTOP_INVERTING
+      #if Q_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires Q_MIN_ENDSTOP_INVERTING = true when homing to Q_MIN."
+      #else
+        #error "SENSORLESS_HOMING requires Q_MIN_ENDSTOP_INVERTING = false when homing TMC2209 to Q_MIN."
+      #endif
+    #elif LINEAR_AXES >= 10 && Q_SENSORLESS && Q_HOME_DIR > 0 && Q_MAX_ENDSTOP_INVERTING != Q_ENDSTOP_INVERTING
+      #if Q_ENDSTOP_INVERTING
+        #error "SENSORLESS_HOMING requires Q_MAX_ENDSTOP_INVERTING = true when homing to Q_MAX."
+      #else
+        #error "SENSORLESS_HOMING requires Q_MAX_ENDSTOP_INVERTING = false when homing TMC2209 to Q_MAX."
+      #endif
+
     #endif
   #endif
 
@@ -2887,6 +3034,9 @@ static_assert(hbm[Z_AXIS] >= 0, "HOMING_BUMP_MM.Z must be greater than or equal 
   #undef J_ENDSTOP_INVERTING
   #undef K_ENDSTOP_INVERTING
   #undef M_ENDSTOP_INVERTING    /**SG**/
+  #undef O_ENDSTOP_INVERTING    /**SG**/
+  #undef P_ENDSTOP_INVERTING    /**SG**/
+  #undef Q_ENDSTOP_INVERTING    /**SG**/
 #endif
 
 // Sensorless probing requirements
@@ -3519,23 +3669,38 @@ static_assert(   _ARR_TEST(3,0) && _ARR_TEST(3,1) && _ARR_TEST(3,2)
   #error "Z_DRIVER_TYPE is not recognized."
 #endif
 #if LINEAR_AXES >= 4
-  #if _BAD_DRIVER(Z)
+  #if _BAD_DRIVER(I)
     #error "I_DRIVER_TYPE is not recognized."
   #endif
 #endif
 #if LINEAR_AXES >= 5
-  #if _BAD_DRIVER(Z)
-    #error "I_DRIVER_TYPE is not recognized."
+  #if _BAD_DRIVER(J)
+    #error "J_DRIVER_TYPE is not recognized."
   #endif
 #endif
 #if LINEAR_AXES >= 6
-  #if _BAD_DRIVER(Z)
-    #error "I_DRIVER_TYPE is not recognized."
+  #if _BAD_DRIVER(K)
+    #error "K_DRIVER_TYPE is not recognized."
   #endif
 #endif
-#if LINEAR_AXES >= 7    /**SG**/ // Aixo no se se si esta be...  Tots els eixos comproba el Z ??
-  #if _BAD_DRIVER(Z)
-    #error "I_DRIVER_TYPE is not recognized."
+#if LINEAR_AXES >= 7    /**SG**/ 
+  #if _BAD_DRIVER(M)
+    #error "M_DRIVER_TYPE is not recognized."
+  #endif
+#endif
+#if LINEAR_AXES >= 8    /**SG**/ 
+  #if _BAD_DRIVER(O)
+    #error "O_DRIVER_TYPE is not recognized."
+  #endif
+#endif
+#if LINEAR_AXES >= 9    /**SG**/ 
+  #if _BAD_DRIVER(P)
+    #error "P_DRIVER_TYPE is not recognized."
+  #endif
+#endif
+#if LINEAR_AXES >= 10    /**SG**/ 
+  #if _BAD_DRIVER(Q)
+    #error "Q_DRIVER_TYPE is not recognized."
   #endif
 #endif
 

@@ -429,6 +429,18 @@ xyze_int8_t Stepper::count_direction{0};
   #define M_APPLY_DIR(v,Q) M_DIR_WRITE(v)
   #define M_APPLY_STEP(v,Q) M_STEP_WRITE(v)
 #endif
+#if LINEAR_AXES >= 8  
+  #define O_APPLY_DIR(v,Q) O_DIR_WRITE(v)
+  #define O_APPLY_STEP(v,Q) O_STEP_WRITE(v)
+#endif
+#if LINEAR_AXES >= 9  
+  #define P_APPLY_DIR(v,Q) P_DIR_WRITE(v)
+  #define P_APPLY_STEP(v,Q) P_STEP_WRITE(v)
+#endif
+#if LINEAR_AXES >= 10  
+  #define Q_APPLY_DIR(v,Q) Q_DIR_WRITE(v)
+  #define Q_APPLY_STEP(v,Q) Q_STEP_WRITE(v)
+#endif
 
 #if DISABLED(MIXING_EXTRUDER)
   #define E_APPLY_STEP(v,Q) E_STEP_WRITE(stepper_extruder, v)
@@ -511,6 +523,15 @@ void Stepper::set_directions() {
   /**SG**/
   #if HAS_M_DIR
     SET_STEP_DIR(M); // M
+  #endif
+   #if HAS_O_DIR
+    SET_STEP_DIR(O); // O
+  #endif
+   #if HAS_P_DIR
+    SET_STEP_DIR(P); // P
+  #endif
+   #if HAS_Q_DIR
+    SET_STEP_DIR(Q); // Q
   #endif
 
 
@@ -1738,6 +1759,15 @@ void Stepper::pulse_phase_isr() {
       #if HAS_M_STEP
         PULSE_PREP(M);
       #endif
+      #if HAS_O_STEP
+        PULSE_PREP(O);
+      #endif
+      #if HAS_P_STEP
+        PULSE_PREP(P);
+      #endif
+      #if HAS_Q_STEP
+        PULSE_PREP(Q);
+      #endif
 
       #if EITHER(LIN_ADVANCE, MIXING_EXTRUDER)
         delta_error.e += advance_dividend.e;
@@ -1786,6 +1816,15 @@ void Stepper::pulse_phase_isr() {
     #if HAS_M_STEP
       PULSE_START(M);
     #endif
+    #if HAS_O_STEP
+      PULSE_START(O);
+    #endif
+    #if HAS_P_STEP
+      PULSE_START(P);
+    #endif
+    #if HAS_Q_STEP
+      PULSE_START(Q);
+    #endif
 
     #if DISABLED(LIN_ADVANCE)
       #if ENABLED(MIXING_EXTRUDER)
@@ -1828,6 +1867,15 @@ void Stepper::pulse_phase_isr() {
     /**SG**/
     #if HAS_M_STEP
       PULSE_STOP(M);
+    #endif
+    #if HAS_O_STEP
+      PULSE_STOP(O);
+    #endif
+    #if HAS_P_STEP
+      PULSE_STOP(P);
+    #endif
+    #if HAS_Q_STEP
+      PULSE_STOP(Q);
     #endif
 
     #if DISABLED(LIN_ADVANCE)
@@ -2175,6 +2223,15 @@ uint32_t Stepper::block_phase_isr() {
       #if LINEAR_AXES >= 7  /**SG**/
         if (current_block->steps.m) SBI(axis_bits, M_AXIS);
       #endif
+      #if LINEAR_AXES >= 8  /**SG**/
+        if (current_block->steps.o) SBI(axis_bits, O_AXIS);
+      #endif
+      #if LINEAR_AXES >= 9  /**SG**/
+        if (current_block->steps.p) SBI(axis_bits, P_AXIS);
+      #endif
+      #if LINEAR_AXES >= 10  /**SG**/
+        if (current_block->steps.q) SBI(axis_bits, Q_AXIS);
+      #endif
       //if (!!current_block->steps.e) SBI(axis_bits, E_AXIS);
       //if (!!current_block->steps.a) SBI(axis_bits, X_HEAD);
       //if (!!current_block->steps.b) SBI(axis_bits, Y_HEAD);
@@ -2509,10 +2566,21 @@ void Stepper::init() {
   #if HAS_K_DIR
     K_DIR_INIT();
   #endif
+  
   /**SG**/
   #if HAS_M_DIR
     M_DIR_INIT();
   #endif
+  #if HAS_O_DIR
+    O_DIR_INIT();
+  #endif
+  #if HAS_P_DIR
+    P_DIR_INIT();
+  #endif
+#if HAS_Q_DIR
+    Q_DIR_INIT();
+  #endif
+
 
   #if HAS_E0_DIR
     E0_DIR_INIT();
@@ -2584,10 +2652,23 @@ void Stepper::init() {
     K_ENABLE_INIT();
     if (!K_ENABLE_ON) K_ENABLE_WRITE(HIGH);
   #endif
+
   /**SG**/
   #if HAS_M_ENABLE
     M_ENABLE_INIT();
     if (!M_ENABLE_ON) M_ENABLE_WRITE(HIGH);
+  #endif
+  #if HAS_O_ENABLE
+    O_ENABLE_INIT();
+    if (!O_ENABLE_ON) O_ENABLE_WRITE(HIGH);
+  #endif
+  #if HAS_P_ENABLE
+    P_ENABLE_INIT();
+    if (!P_ENABLE_ON) P_ENABLE_WRITE(HIGH);
+  #endif
+  #if HAS_Q_ENABLE
+    Q_ENABLE_INIT();
+    if (!Q_ENABLE_ON) Q_ENABLE_WRITE(HIGH);
   #endif
 
   #if HAS_E0_ENABLE
@@ -2675,9 +2756,19 @@ void Stepper::init() {
   #if HAS_K_STEP
     AXIS_INIT(K, K);
   #endif
+
   /**SG**/
   #if HAS_M_STEP
     AXIS_INIT(M, M);
+  #endif
+  #if HAS_O_STEP
+    AXIS_INIT(O, O);
+  #endif
+  #if HAS_P_STEP
+    AXIS_INIT(P, P);
+  #endif
+  #if HAS_Q_STEP
+    AXIS_INIT(Q, Q);
   #endif
 
   #if E_STEPPERS && HAS_E0_STEP
@@ -2720,7 +2811,10 @@ void Stepper::init() {
       | TERN0(INVERT_I_DIR, _BV(I_AXIS)),
       | TERN0(INVERT_J_DIR, _BV(J_AXIS)),
       | TERN0(INVERT_K_DIR, _BV(K_AXIS)),
-      | TERN0(INVERT_M_DIR, _BV(M_AXIS))  /**SG**/
+      | TERN0(INVERT_M_DIR, _BV(M_AXIS)),  /**SG**/
+      | TERN0(INVERT_O_DIR, _BV(O_AXIS)),  /**SG**/
+      | TERN0(INVERT_P_DIR, _BV(P_AXIS)),  /**SG**/
+      | TERN0(INVERT_Q_DIR, _BV(Q_AXIS))  /**SG**/
     )
   );
 
@@ -2740,7 +2834,8 @@ void Stepper::init() {
  * derive the current XYZ position later on.
  */
 void Stepper::_set_position(
-  LIST_N(LINEAR_AXES, const int32_t &a, const int32_t &b, const int32_t &c, const int32_t &i, const int32_t &j, const int32_t &k, const int32_t &m),  /**SG**/
+  LIST_N(LINEAR_AXES, const int32_t &a, const int32_t &b, const int32_t &c, const int32_t &i, const int32_t &j, \
+                      const int32_t &k, const int32_t &m, const int32_t &o, const int32_t &p, const int32_t &q),  /**SG**/
   const int32_t &e
 ) {
   #if CORE_IS_XY
@@ -2757,7 +2852,7 @@ void Stepper::_set_position(
     count_position.set(a - b, b, c);
   #else
     // default non-h-bot planning
-    count_position.set(LIST_N(LINEAR_AXES, a, b, c, i, j, k, m));  /**SG**/
+    count_position.set(LIST_N(LINEAR_AXES, a, b, c, i, j, k, m, o, p, q));  /**SG**/
   #endif
   count_position.e = e;
 }
@@ -2784,12 +2879,13 @@ int32_t Stepper::position(const AxisEnum axis) {
 // Set the current position in steps
 //TODO: Test for LINEAR_AXES >= 4
 void Stepper::set_position(
-  LIST_N(LINEAR_AXES, const int32_t &a, const int32_t &b, const int32_t &c, const int32_t &i, const int32_t &j, const int32_t &k, const int32_t &m),  /**SG**/
+  LIST_N(LINEAR_AXES, const int32_t &a, const int32_t &b, const int32_t &c, const int32_t &i, const int32_t &j, \
+                      const int32_t &k, const int32_t &m, const int32_t &o, const int32_t &p, const int32_t &q),  /**SG**/
   const int32_t &e
 ) {
   planner.synchronize();
   const bool was_enabled = suspend();
-  _set_position(LIST_N(LINEAR_AXES, a, b, c, i, j, k, m), e);  /**SG**/
+  _set_position(LIST_N(LINEAR_AXES, a, b, c, i, j, k, m, o, p, q), e);  /**SG**/
   if (was_enabled) wake_up();
 }
 
@@ -2879,6 +2975,15 @@ void Stepper::report_a_position(const xyz_long_t &pos) {
   #endif
   #if LINEAR_AXES >= 7   /**SG**/
     SERIAL_ECHOPAIR_P(SP_M_LBL, pos.m);
+  #endif
+  #if LINEAR_AXES >= 8   /**SG**/
+    SERIAL_ECHOPAIR_P(SP_O_LBL, pos.o);
+  #endif
+  #if LINEAR_AXES >= 9   /**SG**/
+    SERIAL_ECHOPAIR_P(SP_P_LBL, pos.p);
+  #endif
+  #if LINEAR_AXES >= 10   /**SG**/
+    SERIAL_ECHOPAIR_P(SP_Q_LBL, pos.q);
   #endif
   SERIAL_EOL();
 }
@@ -3039,10 +3144,14 @@ void Stepper::report_positions() {
           ENABLE_AXIS_J();
           ENABLE_AXIS_K();
           ENABLE_AXIS_M();  /**SG**/
+          ENABLE_AXIS_O();  /**SG**/
+          ENABLE_AXIS_P();  /**SG**/
+          ENABLE_AXIS_Q();  /**SG**/
 
           DIR_WAIT_BEFORE();
 
-          const xyz_byte_t old_dir = ARRAY_N(LINEAR_AXES, X_DIR_READ(), Y_DIR_READ(), Z_DIR_READ(), I_DIR_READ(), J_DIR_READ(), K_DIR_READ(), M_DIR_READ());  /**SG**/
+          const xyz_byte_t old_dir = ARRAY_N(LINEAR_AXES, X_DIR_READ(), Y_DIR_READ(), Z_DIR_READ(), I_DIR_READ(), J_DIR_READ(), \
+                                                          K_DIR_READ(), M_DIR_READ(), O_DIR_READ(), P_DIR_READ(), Q_DIR_READ());  /**SG**/
 
           X_DIR_WRITE(INVERT_X_DIR ^ z_direction);
           Y_DIR_WRITE(INVERT_Y_DIR ^ z_direction);
@@ -3060,6 +3169,15 @@ void Stepper::report_positions() {
           /**SG**/
           #ifdef M_DIR_WRITE
             M_DIR_WRITE(INVERT_M_DIR ^ z_direction);
+          #endif
+          #ifdef O_DIR_WRITE
+            O_DIR_WRITE(INVERT_O_DIR ^ z_direction);
+          #endif
+          #ifdef P_DIR_WRITE
+            P_DIR_WRITE(INVERT_P_DIR ^ z_direction);
+          #endif
+          #ifdef Q_DIR_WRITE
+            Q_DIR_WRITE(INVERT_Q_DIR ^ z_direction);
           #endif
 
           DIR_WAIT_AFTER();
@@ -3083,6 +3201,15 @@ void Stepper::report_positions() {
           #ifdef M_STEP_WRITE
             M_STEP_WRITE(!INVERT_M_STEP_PIN);
           #endif
+          #ifdef O_STEP_WRITE
+            O_STEP_WRITE(!INVERT_O_STEP_PIN);
+          #endif
+          #ifdef P_STEP_WRITE
+            P_STEP_WRITE(!INVERT_P_STEP_PIN);
+          #endif
+          #ifdef Q_STEP_WRITE
+            Q_STEP_WRITE(!INVERT_Q_STEP_PIN);
+          #endif
 
           _PULSE_WAIT();
 
@@ -3102,6 +3229,15 @@ void Stepper::report_positions() {
           /**SG**/
            #ifdef M_STEP_WRITE
             M_STEP_WRITE(INVERT_M_STEP_PIN);
+          #endif
+           #ifdef O_STEP_WRITE
+            O_STEP_WRITE(INVERT_O_STEP_PIN);
+          #endif
+           #ifdef P_STEP_WRITE
+            P_STEP_WRITE(INVERT_P_STEP_PIN);
+          #endif
+          #ifdef Q_STEP_WRITE
+            Q_STEP_WRITE(INVERT_Q_STEP_PIN);
           #endif
 
 
@@ -3125,6 +3261,15 @@ void Stepper::report_positions() {
           #ifdef M_DIR_WRITE
             M_DIR_WRITE(old_dir.m);
           #endif
+          #ifdef O_DIR_WRITE
+            O_DIR_WRITE(old_dir.o);
+          #endif
+          #ifdef P_DIR_WRITE
+            P_DIR_WRITE(old_dir.p);
+          #endif
+          #ifdef Q_DIR_WRITE
+            Q_DIR_WRITE(old_dir.q);
+          #endif
 
           EXTRA_DIR_WAIT_AFTER();
 
@@ -3143,6 +3288,15 @@ void Stepper::report_positions() {
       #endif
       #if LINEAR_AXES >= 7   /**SG**/
         case M_AXIS: BABYSTEP_AXIS(M, 0, direction); break;
+      #endif
+      #if LINEAR_AXES >= 8   /**SG**/
+        case O_AXIS: BABYSTEP_AXIS(O, 0, direction); break;
+      #endif
+      #if LINEAR_AXES >= 9   /**SG**/
+        case P_AXIS: BABYSTEP_AXIS(P, 0, direction); break;
+      #endif
+      #if LINEAR_AXES >= 10   /**SG**/
+        case Q_AXIS: BABYSTEP_AXIS(Q, 0, direction); break;
       #endif
 
       default: break;
@@ -3498,6 +3652,15 @@ void Stepper::report_positions() {
       #if HAS_M_MICROSTEPS
         case 14: WRITE(M_MS1_PIN, ms1); break
       #endif
+      #if HAS_O_MICROSTEPS
+        case 15: WRITE(O_MS1_PIN, ms1); break
+      #endif
+      #if HAS_P_MICROSTEPS
+        case 16: WRITE(P_MS1_PIN, ms1); break
+      #endif
+      #if HAS_Q_MICROSTEPS
+        case 17: WRITE(Q_MS1_PIN, ms1); break
+      #endif
     }
     if (ms2 >= 0) switch (driver) {
       #if HAS_X_MS_PINS || HAS_X2_MS_PINS
@@ -3572,6 +3735,15 @@ void Stepper::report_positions() {
       /**SG**/
       #if HAS_M_M_PINS
         case 14: WRITE(M_MS2_PIN, ms2); break
+      #endif
+      #if HAS_O_M_PINS
+        case 15: WRITE(O_MS2_PIN, ms2); break
+      #endif
+      #if HAS_P_M_PINS
+        case 16: WRITE(P_MS2_PIN, ms2); break
+      #endif
+      #if HAS_Q_M_PINS
+        case 17: WRITE(Q_MS2_PIN, ms2); break
       #endif
     }
     if (ms3 >= 0) switch (driver) {
@@ -3715,6 +3887,24 @@ void Stepper::report_positions() {
       MS_LINE(M);
       #if PIN_EXISTS(M_MS3)
         PIN_CHAR(M_MS3);
+      #endif
+    #endif
+    #if HAS_O_MS_PINS
+      MS_LINE(O);
+      #if PIN_EXISTS(O_MS3)
+        PIN_CHAR(O_MS3);
+      #endif
+    #endif
+    #if HAS_P_MS_PINS
+      MS_LINE(P);
+      #if PIN_EXISTS(P_MS3)
+        PIN_CHAR(P_MS3);
+      #endif
+    #endif
+    #if HAS_Q_MS_PINS
+      MS_LINE(Q);
+      #if PIN_EXISTS(Q_MS3)
+        PIN_CHAR(Q_MS3);
       #endif
     #endif
 

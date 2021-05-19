@@ -141,6 +141,27 @@
     #define MATCH_M_MIN_EILINE(P) MATCH_EILINE(P, M_MIN_PIN)
   #endif
 #endif
+#if LINEAR_AXES >= 8    /**SG**/
+  #if HAS_O_MAX
+    #define MATCH_O_MAX_EILINE(P) MATCH_EILINE(P, O_MAX_PIN)
+  #elif HAS_O_MIN
+    #define MATCH_O_MIN_EILINE(P) MATCH_EILINE(P, O_MIN_PIN)
+  #endif
+#endif
+#if LINEAR_AXES >= 9    /**SG**/
+  #if HAS_P_MAX
+    #define MATCH_P_MAX_EILINE(P) MATCH_EILINE(P, P_MAX_PIN)
+  #elif HAS_P_MIN
+    #define MATCH_P_MIN_EILINE(P) MATCH_EILINE(P, P_MIN_PIN)
+  #endif
+#endif
+#if LINEAR_AXES >= 10    /**SG**/
+  #if HAS_Q_MAX
+    #define MATCH_Q_MAX_EILINE(P) MATCH_EILINE(P, Q_MAX_PIN)
+  #elif HAS_Q_MIN
+    #define MATCH_Q_MIN_EILINE(P) MATCH_EILINE(P, Q_MIN_PIN)
+  #endif
+#endif
 
 #ifndef MATCH_I_MIN_EILINE
   #define MATCH_I_MIN_EILINE(P) false
@@ -154,6 +175,15 @@
 #ifndef MATCH_M_MIN_EILINE     /**SG**/
   #define MATCH_M_MIN_EILINE(P) false
 #endif
+#ifndef MATCH_O_MIN_EILINE     /**SG**/
+  #define MATCH_O_MIN_EILINE(P) false
+#endif
+#ifndef MATCH_P_MIN_EILINE     /**SG**/
+  #define MATCH_P_MIN_EILINE(P) false
+#endif
+#ifndef MATCH_Q_MIN_EILINE     /**SG**/
+  #define MATCH_Q_MIN_EILINE(P) false
+#endif
 #ifndef MATCH_I_MAX_EILINE
   #define MATCH_I_MAX_EILINE(P) false
 #endif
@@ -166,6 +196,15 @@
 #ifndef MATCH_M_MAX_EILINE  /**SG**/
   #define MATCH_M_MAX_EILINE(P) false
 #endif
+#ifndef MATCH_O_MAX_EILINE  /**SG**/
+  #define MATCH_O_MAX_EILINE(P) false
+#endif
+#ifndef MATCH_P_MAX_EILINE  /**SG**/
+  #define MATCH_P_MAX_EILINE(P) false
+#endif
+#ifndef MATCH_Q_MAX_EILINE  /**SG**/
+  #define MATCH_Q_MAX_EILINE(P) false
+#endif
 
 /**SG**/
 #define AVAILABLE_EILINE(P)     (PIN_TO_EILINE(P) != -1                                 \
@@ -176,6 +215,9 @@
                                  && !MATCH_J_MAX_EILINE(P) && !MATCH_J_MIN_EILINE(P)    \
                                  && !MATCH_K_MAX_EILINE(P) && !MATCH_K_MIN_EILINE(P)    \
                                  && !MATCH_M_MAX_EILINE(P) && !MATCH_M_MIN_EILINE(P)    \
+                                 && !MATCH_O_MAX_EILINE(P) && !MATCH_O_MIN_EILINE(P)    \
+                                 && !MATCH_P_MAX_EILINE(P) && !MATCH_P_MIN_EILINE(P)    \
+                                 && !MATCH_Q_MAX_EILINE(P) && !MATCH_Q_MIN_EILINE(P)    \
                                  && !MATCH_Z2_MAX_EILINE(P) && !MATCH_Z2_MIN_EILINE(P)  \
                                  && !MATCH_Z3_MAX_EILINE(P) && !MATCH_Z3_MIN_EILINE(P)  \
                                  && !MATCH_Z4_MAX_EILINE(P) && !MATCH_Z4_MIN_EILINE(P)  \
@@ -302,5 +344,44 @@ void setup_endstop_interrupts() {
       #error "M_MIN_PIN has no EXTINT line available."
     #endif
     attachInterrupt(M_MIN_PIN, endstop_ISR, CHANGE);
+  #endif
+
+    /**SG**/
+  #if HAS_O_MAX
+    #if !AVAILABLE_EILINE(O_MAX_PIN)
+      #error "O_MAX_PIN has no EXTINT line available."
+    #endif
+    attachInterrupt(O_MAX_PIN, endstop_ISR, CHANGE);
+  #elif HAS_O_MIN
+    #if !AVAILABLE_EILINE(O_MIN_PIN)
+      #error "O_MIN_PIN has no EXTINT line available."
+    #endif
+    attachInterrupt(O_MIN_PIN, endstop_ISR, CHANGE);
+  #endif
+
+    /**SG**/
+  #if HAS_P_MAX
+    #if !AVAILABLE_EILINE(P_MAX_PIN)
+      #error "P_MAX_PIN has no EXTINT line available."
+    #endif
+    attachInterrupt(P_MAX_PIN, endstop_ISR, CHANGE);
+  #elif HAS_P_MIN
+    #if !AVAILABLE_EILINE(P_MIN_PIN)
+      #error "P_MIN_PIN has no EXTINT line available."
+    #endif
+    attachInterrupt(P_MIN_PIN, endstop_ISR, CHANGE);
+  #endif
+
+    /**SG**/
+  #if HAS_Q_MAX
+    #if !AVAILABLE_EILINE(Q_MAX_PIN)
+      #error "Q_MAX_PIN has no EXTINT line available."
+    #endif
+    attachInterrupt(Q_MAX_PIN, endstop_ISR, CHANGE);
+  #elif HAS_Q_MIN
+    #if !AVAILABLE_EILINE(Q_MIN_PIN)
+      #error "Q_MIN_PIN has no EXTINT line available."
+    #endif
+    attachInterrupt(Q_MIN_PIN, endstop_ISR, CHANGE);
   #endif
 }

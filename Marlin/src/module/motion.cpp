@@ -94,7 +94,7 @@ bool relative_mode; // = false;
  *   Used by 'line_to_current_position' to do a move after changing it.
  *   Used by 'sync_plan_position' to update 'planner.position'.
  */
-xyze_pos_t current_position = { LIST_N(LINEAR_AXES, X_HOME_POS, Y_HOME_POS, Z_HOME_POS, I_HOME_POS, J_HOME_POS, K_HOME_POS, M_HOME_POS), 0 };  /**SG**/
+xyze_pos_t current_position = { LIST_N(LINEAR_AXES, X_HOME_POS, Y_HOME_POS, Z_HOME_POS, I_HOME_POS, J_HOME_POS, K_HOME_POS, M_HOME_POS, O_HOME_POS, P_HOME_POS, Q_HOME_POS), 0 };  /**SG**/
 
 /**
  * Cartesian Destination
@@ -216,6 +216,16 @@ inline void report_logical_position(const xyze_pos_t &rpos) {
     #if LINEAR_AXES >= 7    /**SG**/
       , SP_M_LBL, lpos.m
     #endif
+    #if LINEAR_AXES >= 8    /**SG**/
+      , SP_O_LBL, lpos.o
+    #endif
+    #if LINEAR_AXES >= 9    /**SG**/
+      , SP_P_LBL, lpos.p
+    #endif
+    #if LINEAR_AXES >= 10    /**SG**/
+      , SP_Q_LBL, lpos.q
+    #endif
+
     , SP_E_LBL, lpos.e
   );
 }
@@ -240,6 +250,17 @@ void report_real_position() {
   #if LINEAR_AXES >= 7  /**SG**/
     npos.m = planner.get_axis_position_mm(M_AXIS);
   #endif
+  #if LINEAR_AXES >= 8  /**SG**/
+    npos.o = planner.get_axis_position_mm(O_AXIS);
+  #endif
+  #if LINEAR_AXES >= 9  /**SG**/
+    npos.p = planner.get_axis_position_mm(P_AXIS);
+  #endif
+    #if LINEAR_AXES >= 10  /**SG**/
+    npos.q = planner.get_axis_position_mm(Q_AXIS);
+  #endif
+
+
   npos.e = planner.get_axis_position_mm(E_AXIS);
 
   #if HAS_POSITION_MODIFIERS
@@ -409,11 +430,12 @@ void _internal_move_to_destination(const feedRate_t &fr_mm_s/*=0.0f*/
  * Plan a move to (X, Y, Z, [I, [J, [K]]]) and set the current_position
  */
 void do_blocking_move_to(
-  LIST_N(LINEAR_AXES, const float rx, const float ry, const float rz, const float ri, const float rj, const float rk, const float rm),  /**SG**/
+  LIST_N(LINEAR_AXES, const float rx, const float ry, const float rz, \
+                      const float ri, const float rj, const float rk, const float rm, const float ro, const float rp, const float rq),  /**SG**/
   const feedRate_t &fr_mm_s/*=0.0f*/
 ) {
   DEBUG_SECTION(log_move, "do_blocking_move_to", DEBUGGING(LEVELING));
-  if (DEBUGGING(LEVELING)) DEBUG_XYZ("> ", LIST_N(LINEAR_AXES, rx, ry, rz, ri, rj, rk, rm));  /**SG**/
+  if (DEBUGGING(LEVELING)) DEBUG_XYZ("> ", LIST_N(LINEAR_AXES, rx, ry, rz, ri, rj, rk, rm, ro, rp, rq));  /**SG**/
 
   const feedRate_t z_feedrate = fr_mm_s ?: homing_feedrate(Z_AXIS),
                   xy_feedrate = fr_mm_s ?: feedRate_t(XY_PROBE_FEEDRATE_MM_S);
@@ -501,13 +523,14 @@ void do_blocking_move_to(
 }
 
 void do_blocking_move_to(const xy_pos_t &raw, const feedRate_t &fr_mm_s/*=0.0f*/) {
-  do_blocking_move_to(LIST_N(LINEAR_AXES, raw.x, raw.y, current_position.z, current_position.i, current_position.j, current_position.k, current_position.m), fr_mm_s);  /**SG**/
+  do_blocking_move_to(LIST_N(LINEAR_AXES, raw.x, raw.y, current_position.z, current_position.i, current_position.j, \
+                                                        current_position.k, current_position.m, current_position.o, current_position.p, current_position.q), fr_mm_s);  /**SG**/
 }
 void do_blocking_move_to(const xyz_pos_t &raw, const feedRate_t &fr_mm_s/*=0.0f*/) {
-  do_blocking_move_to(LIST_N(LINEAR_AXES, raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, raw.m), fr_mm_s);  /**SG**/
+  do_blocking_move_to(LIST_N(LINEAR_AXES, raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, raw.m, raw.o, raw.p, raw.q), fr_mm_s);  /**SG**/
 }
 void do_blocking_move_to(const xyze_pos_t &raw, const feedRate_t &fr_mm_s/*=0.0f*/) {
-  do_blocking_move_to(LIST_N(LINEAR_AXES, raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, raw.m), fr_mm_s);  /**SG**/
+  do_blocking_move_to(LIST_N(LINEAR_AXES, raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, raw.m, raw.o, raw.p, raw.q), fr_mm_s);  /**SG**/
 }
 
 //#if LINEAR_AXES >= 4
@@ -528,39 +551,33 @@ void do_blocking_move_to(const xyze_pos_t &raw, const feedRate_t &fr_mm_s/*=0.0f
 //
 void do_blocking_move_to_x(const float &rx, const feedRate_t &fr_mm_s/*=0.0*/) {
   do_blocking_move_to(
-    LIST_N(LINEAR_AXES, rx, current_position.y, current_position.z, current_position.i, current_position.j, current_position.k, current_position.m ), /**SG**/
+    LIST_N(LINEAR_AXES, rx, current_position.y, current_position.z, current_position.i, current_position.j, current_position.k, \
+                            current_position.m, current_position.o, current_position.p, current_position.q ), /**SG**/
   fr_mm_s);
 }
 void do_blocking_move_to_y(const float &ry, const feedRate_t &fr_mm_s/*=0.0*/) {
   do_blocking_move_to(
-    LIST_N(LINEAR_AXES, current_position.x, ry, current_position.z, current_position.i, current_position.j, current_position.k, current_position.m),  /*SG***/
+    LIST_N(LINEAR_AXES, current_position.x, ry, current_position.z, current_position.i, current_position.j, current_position.k, \
+                        current_position.m, current_position.o, current_position.p, current_position.q),  /*SG***/
     fr_mm_s);
 }
 void do_blocking_move_to_z(const float &rz, const feedRate_t &fr_mm_s/*=0.0*/) {
   do_blocking_move_to_xy_z(current_position, rz, fr_mm_s);
 }
 
-#if LINEAR_AXES >= 4
+
+#if LINEAR_AXES >= 5
   void do_blocking_move_to_i(const float &ri, const feedRate_t &fr_mm_s/*=0.0*/) {
     do_blocking_move_to_xyz_i(current_position, ri, fr_mm_s);
   }
   void do_blocking_move_to_xyz_i(const xyze_pos_t &raw, const float &i, const feedRate_t &fr_mm_s/*=0.0f*/) {
-	  do_blocking_move_to(raw.x, raw.y, raw.z, i, raw.k, raw.m, fr_mm_s);
+	  do_blocking_move_to(raw.x, raw.y, raw.z, i, raw.j, raw.k, raw.m, fr_mm_s);
   }
-#endif
-
-#if LINEAR_AXES >= 5
-//  void do_blocking_move_to_i(const float &ri, const feedRate_t &fr_mm_s/*=0.0*/) {
-//    do_blocking_move_to_xyz_i(current_position, ri, fr_mm_s);
-//  }
-//  void do_blocking_move_to_xyz_i(const xyze_pos_t &raw, const float &i, const feedRate_t &fr_mm_s/*=0.0f*/) {
-//	  do_blocking_move_to(raw.x, raw.y, raw.z, i, fr_mm_s);
-//  }
   void do_blocking_move_to_j(const float &rj, const feedRate_t &fr_mm_s/*=0.0*/) {
     do_blocking_move_to_xyzi_j(current_position, rj, fr_mm_s);
   }
   void do_blocking_move_to_xyzi_j(const xyze_pos_t &raw, const float &j, const feedRate_t &fr_mm_s/*=0.0f*/) {
-    do_blocking_move_to(raw.x, raw.y, raw.z, raw.i, j, raw.m, fr_mm_s);
+    do_blocking_move_to(raw.x, raw.y, raw.z, raw.i, j, raw.k, raw.m, fr_mm_s);
   }
 #endif
 
@@ -569,7 +586,7 @@ void do_blocking_move_to_z(const float &rz, const feedRate_t &fr_mm_s/*=0.0*/) {
     do_blocking_move_to_xyzij_k(current_position, rk, fr_mm_s);
   }
   void do_blocking_move_to_xyzij_k(const xyze_pos_t &raw, const float &k, const feedRate_t &fr_mm_s/*=0.0f*/) {
-    do_blocking_move_to(raw.x, raw.y, raw.z, raw.i, raw.j, k, fr_mm_s);
+    do_blocking_move_to(raw.x, raw.y, raw.z, raw.i, raw.j, k, raw.m, fr_mm_s);
   }
 #endif
 
@@ -583,9 +600,38 @@ void do_blocking_move_to_z(const float &rz, const feedRate_t &fr_mm_s/*=0.0*/) {
   }
 #endif
 
+#if LINEAR_AXES >= 8  /**SG**/
+  void do_blocking_move_to_o(const float &ro, const feedRate_t &fr_mm_s/*=0.0*/) {
+    do_blocking_move_to_xyzijkm_o(current_position, ro, fr_mm_s);
+  }
+  void do_blocking_move_to_xyzijkm_o(const xyze_pos_t &raw, const float &o, const feedRate_t &fr_mm_s/*=0.0f*/) {
+    do_blocking_move_to(raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, raw.m, o, fr_mm_s);
+  }
+#endif
+
+#if LINEAR_AXES >= 9  /**SG**/
+  void do_blocking_move_to_p(const float &rp, const feedRate_t &fr_mm_s/*=0.0*/) {
+    do_blocking_move_to_xyzijkm_p(current_position, rp, fr_mm_s);
+  }
+  void do_blocking_move_to_xyzijkm_p(const xyze_pos_t &raw, const float &p, const feedRate_t &fr_mm_s/*=0.0f*/) {
+    do_blocking_move_to(raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, raw.m, raw.o, p, fr_mm_s);
+  }
+#endif
+
+#if LINEAR_AXES >= 10  /**SG**/
+  void do_blocking_move_to_q(const float &rq, const feedRate_t &fr_mm_s/*=0.0*/) {
+    do_blocking_move_to_xyzijkmp_q(current_position, rq, fr_mm_s);
+  }
+  void do_blocking_move_to_xyzijkmp_q(const xyze_pos_t &raw, const float &q, const feedRate_t &fr_mm_s/*=0.0f*/) {
+    do_blocking_move_to(raw.x, raw.y, raw.z, raw.i, raw.j, raw.k, raw.m, raw.o, raw.p, q, fr_mm_s);
+  }
+#endif
+
+
 void do_blocking_move_to_xy(const float &rx, const float &ry, const feedRate_t &fr_mm_s/*=0.0*/) {
   do_blocking_move_to(
-    LIST_N(LINEAR_AXES, rx, ry, current_position.z, current_position.i, current_position.j, current_position.k, current_position.m),  /**SG**/
+    LIST_N(LINEAR_AXES, rx, ry, current_position.z, current_position.i, current_position.j, current_position.k, \
+                                current_position.m, current_position.o, current_position.p, current_position.q),  /**SG**/
     fr_mm_s
   );
 }
@@ -595,7 +641,8 @@ void do_blocking_move_to_xy(const xy_pos_t &raw, const feedRate_t &fr_mm_s/*=0.0
 
 void do_blocking_move_to_xy_z(const xy_pos_t &raw, const float &z, const feedRate_t &fr_mm_s/*=0.0f*/) {
   do_blocking_move_to(
-    LIST_N(LINEAR_AXES, raw.x, raw.y, z, current_position.i, current_position.j, current_position.k, current_position.m),  /**SG**/
+    LIST_N(LINEAR_AXES, raw.x, raw.y, z, current_position.i, current_position.j, current_position.k, \
+                                         current_position.m, current_position.o, current_position.p, current_position.q),  /**SG**/
     fr_mm_s
   );
 }
@@ -631,8 +678,8 @@ void restore_feedrate_and_scaling() {
   // Software Endstops are based on the configured limits.
   soft_endstops_t soft_endstop = {
     true, false,
-    ARRAY_N(LINEAR_AXES, X_MIN_POS, Y_MIN_POS, Z_MIN_POS, I_MIN_POS, J_MIN_POS, K_MIN_POS, M_MIN_POS),  /**SG**/
-    ARRAY_N(LINEAR_AXES, X_MAX_BED, Y_MAX_BED, Z_MAX_POS, I_MAX_POS, J_MAX_POS, K_MAX_POS, M_MAX_POS)   /**SG**/
+    ARRAY_N(LINEAR_AXES, X_MIN_POS, Y_MIN_POS, Z_MIN_POS, I_MIN_POS, J_MIN_POS, K_MIN_POS, M_MIN_POS, O_MIN_POS, P_MIN_POS, Q_MIN_POS),  /**SG**/
+    ARRAY_N(LINEAR_AXES, X_MAX_BED, Y_MAX_BED, Z_MAX_POS, I_MAX_POS, J_MAX_POS, K_MAX_POS, M_MAX_POS, O_MAX_POS, P_MAX_POS, Q_MAX_POS)   /**SG**/
   };
 
   /**
@@ -1235,6 +1282,16 @@ uint8_t axes_should_home(uint8_t axis_bits/*=LINEAR_AXIS_MASK*/) {
   #if LINEAR_AXES >= 7  /**SG**/
     if (TEST(axis_bits, M_AXIS) && SHOULD_HOME(M_AXIS)) CBI(axis_bits, M_AXIS);
   #endif
+  #if LINEAR_AXES >= 8  /**SG**/
+    if (TEST(axis_bits, O_AXIS) && SHOULD_HOME(O_AXIS)) CBI(axis_bits, O_AXIS);
+  #endif
+  #if LINEAR_AXES >= 9  /**SG**/
+    if (TEST(axis_bits, P_AXIS) && SHOULD_HOME(P_AXIS)) CBI(axis_bits, P_AXIS);
+  #endif
+  #if LINEAR_AXES >= 10  /**SG**/
+    if (TEST(axis_bits, Q_AXIS) && SHOULD_HOME(Q_AXIS)) CBI(axis_bits, Q_AXIS);
+  #endif
+
   return axis_bits;
 }
 
@@ -1250,7 +1307,10 @@ bool homing_needed_error(uint8_t axis_bits/*=LINEAR_AXIS_MASK*/) {
         TEST(axis_bits, I_AXIS) ? "I" : "",
         TEST(axis_bits, J_AXIS) ? "J" : "",
         TEST(axis_bits, K_AXIS) ? "K" : "",
-        TEST(axis_bits, M_AXIS) ? "M" : ""    /**SG**/
+        TEST(axis_bits, M_AXIS) ? "M" : "",    /**SG**/
+        TEST(axis_bits, O_AXIS) ? "O" : "",    /**SG**/
+        TEST(axis_bits, P_AXIS) ? "P" : "",    /**SG**/
+        TEST(axis_bits, Q_AXIS) ? "Q" : ""    /**SG**/
       )
     );
     SERIAL_ECHO_START();
@@ -1662,6 +1722,34 @@ void set_axis_never_homed(const AxisEnum axis) {
           stepperBackoutDir = INVERT_M_DIR ? effectorBackoutDir : -effectorBackoutDir;
           break;
       #endif
+      /**SG**/
+      #ifdef O_MICROSTEPS
+        case O_AXIS:
+          phasePerUStep = PHASE_PER_MICROSTEP(O);
+          phaseCurrent = stepperO.get_microstep_counter();
+          effectorBackoutDir = -O_HOME_DIR;
+          stepperBackoutDir = INVERT_O_DIR ? effectorBackoutDir : -effectorBackoutDir;
+          break;
+      #endif
+      /**SG**/
+      #ifdef P_MICROSTEPS
+        case P_AXIS:
+          phasePerUStep = PHASE_PER_MICROSTEP(P);
+          phaseCurrent = stepperP.get_microstep_counter();
+          effectorBackoutDir = -P_HOME_DIR;
+          stepperBackoutDir = INVERT_P_DIR ? effectorBackoutDir : -effectorBackoutDir;
+          break;
+      #endif
+      /**SG**/
+      #ifdef Q_MICROSTEPS
+        case Q_AXIS:
+          phasePerUStep = PHASE_PER_MICROSTEP(Q);
+          phaseCurrent = stepperQ.get_microstep_counter();
+          effectorBackoutDir = -Q_HOME_DIR;
+          stepperBackoutDir = INVERT_Q_DIR ? effectorBackoutDir : -effectorBackoutDir;
+          break;
+      #endif
+
       default: return;
     }
 
@@ -1725,7 +1813,10 @@ void homeaxis(const AxisEnum axis) {
         && !_CAN_HOME(I),
         && !_CAN_HOME(J),
         && !_CAN_HOME(K),
-        && !_CAN_HOME(M))   /**SG**/
+        && !_CAN_HOME(M),   /**SG**/
+        && !_CAN_HOME(O),   /**SG**/
+        && !_CAN_HOME(P),   /**SG**/
+        && !_CAN_HOME(Q))   /**SG**/
     ) return;
   #endif
 

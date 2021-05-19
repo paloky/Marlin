@@ -239,7 +239,7 @@ PGMSTR(G28_STR, "G28");
 PGMSTR(M21_STR, "M21");
 PGMSTR(M23_STR, "M23 %s");
 PGMSTR(M24_STR, "M24");
-PGMSTR(SP_P_STR, " P");  PGMSTR(SP_T_STR, " T");
+PGMSTR(SP_P2_STR, " P");  PGMSTR(SP_T_STR, " T");
 PGMSTR(X_STR,     "X");  PGMSTR(Y_STR,     "Y");  PGMSTR(Z_STR,     "Z");  PGMSTR(E_STR, "E");
 PGMSTR(X_LBL,     "X:"); PGMSTR(Y_LBL,     "Y:"); PGMSTR(Z_LBL,     "Z:"); PGMSTR(E_LBL, "E:");
 PGMSTR(SP_A_STR, " A");  PGMSTR(SP_B_STR, " B");  PGMSTR(SP_C_STR, " C");
@@ -254,6 +254,12 @@ PGMSTR(K_STR, AXIS6_STR);
 PGMSTR(K_LBL, AXIS6_STR ":");
 PGMSTR(M_STR, AXIS7_STR);     /**SG**/
 PGMSTR(M_LBL, AXIS7_STR ":"); /**SG**/
+PGMSTR(O_STR, AXIS8_STR);     /**SG**/
+PGMSTR(O_LBL, AXIS8_STR ":"); /**SG**/
+PGMSTR(P_STR, AXIS9_STR);     /**SG**/
+PGMSTR(P_LBL, AXIS9_STR ":"); /**SG**/
+PGMSTR(Q_STR, AXIS10_STR);     /**SG**/
+PGMSTR(Q_LBL, AXIS10_STR ":"); /**SG**/
 
 PGMSTR(SP_I_STR, " " AXIS4_STR); 
 PGMSTR(SP_I_LBL, " " AXIS4_STR ":");
@@ -263,6 +269,12 @@ PGMSTR(SP_K_STR, " " AXIS6_STR);
 PGMSTR(SP_K_LBL, " " AXIS6_STR ":");
 PGMSTR(SP_M_STR, " " AXIS7_STR);    /**SG**/
 PGMSTR(SP_M_LBL, " " AXIS7_STR ":");  /**SG**/
+PGMSTR(SP_O_STR, " " AXIS8_STR);    /**SG**/
+PGMSTR(SP_O_LBL, " " AXIS8_STR ":");  /**SG**/
+PGMSTR(SP_P_STR, " " AXIS9_STR);    /**SG**/
+PGMSTR(SP_P_LBL, " " AXIS9_STR ":");  /**SG**/
+PGMSTR(SP_Q_STR, " " AXIS10_STR);    /**SG**/
+PGMSTR(SP_Q_LBL, " " AXIS10_STR ":");  /**SG**/
 
 MarlinState marlin_state = MF_INITIALIZING;
 
@@ -386,6 +398,9 @@ void enable_all_steppers() {
   ENABLE_AXIS_J();
   ENABLE_AXIS_K();
   ENABLE_AXIS_M();   /**SG**/
+  ENABLE_AXIS_O();   /**SG**/
+  ENABLE_AXIS_P();   /**SG**/
+  ENABLE_AXIS_Q();   /**SG**/
 
   enable_e_steppers();
 
@@ -413,6 +428,9 @@ void disable_all_steppers() {
   DISABLE_AXIS_J();
   DISABLE_AXIS_K();
   DISABLE_AXIS_M();    /**SG**/
+  DISABLE_AXIS_O();    /**SG**/
+  DISABLE_AXIS_P();    /**SG**/
+  DISABLE_AXIS_Q();    /**SG**/
 
   disable_e_steppers();
 
@@ -582,6 +600,15 @@ inline void manage_inactivity(const bool ignore_stepper_queue=false) {
         #endif
         #if ENABLED(DISABLE_INACTIVE_M)   /**SG**/
           DISABLE_AXIS_M();
+        #endif
+        #if ENABLED(DISABLE_INACTIVE_O)   /**SG**/
+          DISABLE_AXIS_O();
+        #endif
+        #if ENABLED(DISABLE_INACTIVE_P)   /**SG**/
+          DISABLE_AXIS_P();
+        #endif
+        #if ENABLED(DISABLE_INACTIVE_Q)   /**SG**/
+          DISABLE_AXIS_Q();
         #endif
 
         if (ENABLED(DISABLE_INACTIVE_E)) disable_e_steppers();
@@ -1331,7 +1358,7 @@ void setup() {
   #endif
 
   #if HAS_TRINAMIC_CONFIG && DISABLED(PSU_DEFAULT_OFF)
-    SETUP_RUN(test_tmc_connection(true, LIST_N(LINEAR_AXES, true, true, true, true, true, true, true)) );  /**SG**/
+    SETUP_RUN(test_tmc_connection(true, LIST_N(LINEAR_AXES, true, true, true, true, true, true, true, true, true, true)) );  /**SG**/
   #endif
 
   #if HAS_PRUSA_MMU2

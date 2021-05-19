@@ -68,6 +68,16 @@
 #if AXIS_IS_L64XX(M)
   L64XX_CLASS(m) stepperK(L6470_CHAIN_SS_PIN);
 #endif
+#if AXIS_IS_L64XX(O)
+  L64XX_CLASS(o) stepperO(L6470_CHAIN_SS_PIN);
+#endif
+#if AXIS_IS_L64XX(P)
+  L64XX_CLASS(p) stepperP(L6470_CHAIN_SS_PIN);
+#endif
+#if AXIS_IS_L64XX(Q)
+  L64XX_CLASS(q) stepperQ(L6470_CHAIN_SS_PIN);
+#endif
+
 
 #if AXIS_IS_L64XX(E0)
   L64XX_CLASS(E0) stepperE0(L6470_CHAIN_SS_PIN);
@@ -222,6 +232,15 @@ void L64XX_Marlin::init_to_defaults() {
   /**SG**/
   #if AXIS_IS_L64XX(M)
     L6470_INIT_CHIP(M);
+  #endif
+  #if AXIS_IS_L64XX(O)
+    L6470_INIT_CHIP(O);
+  #endif
+  #if AXIS_IS_L64XX(P)
+    L6470_INIT_CHIP(P);
+  #endif
+  #if AXIS_IS_L64XX(Q)
+    L6470_INIT_CHIP(Q);
   #endif
 
   #if AXIS_IS_L64XX(E0)

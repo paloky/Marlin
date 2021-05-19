@@ -33,7 +33,7 @@
  * M17: Enable stepper motors
  */
 void GcodeSuite::M17() {
-  if (parser.seen(GANG_N(LINEAR_AXES, "X", "Y", "Z", AXIS4_STR, AXIS5_STR, AXIS6_STR, AXIS7_STR) "E")) {    /**SG**/
+  if (parser.seen(GANG_N(LINEAR_AXES, "X", "Y", "Z", AXIS4_STR, AXIS5_STR, AXIS6_STR, AXIS7_STR, AXIS8_STR, AXIS9_STR, AXIS10_STR) "E")) {    /**SG**/
     if (parser.seen('X')) ENABLE_AXIS_X();
     if (parser.seen('Y')) ENABLE_AXIS_Y();
     if (parser.seen('Z')) ENABLE_AXIS_Z();
@@ -48,6 +48,15 @@ void GcodeSuite::M17() {
     #endif
     #if LINEAR_AXES >= 7    /**SG**/
       if (parser.seen(AXIS7_STR)) ENABLE_AXIS_M();
+    #endif
+    #if LINEAR_AXES >= 8    /**SG**/
+      if (parser.seen(AXIS8_STR)) ENABLE_AXIS_O();
+    #endif
+    #if LINEAR_AXES >= 9    /**SG**/
+      if (parser.seen(AXIS9_STR)) ENABLE_AXIS_P();
+    #endif
+    #if LINEAR_AXES >= 10    /**SG**/
+      if (parser.seen(AXIS10_STR)) ENABLE_AXIS_Q();
     #endif
     if (TERN0(HAS_E_STEPPER_ENABLE, parser.seen('E'))) enable_e_steppers();
   }
@@ -66,7 +75,7 @@ void GcodeSuite::M18_M84() {
     stepper_inactive_time = parser.value_millis_from_seconds();
   }
   else {
-    if (parser.seen(GANG_N(LINEAR_AXES, "X", "Y", "Z", AXIS4_STR, AXIS5_STR, AXIS6_STR, AXIS7_STR) "E")) {    /**SG**/
+    if (parser.seen(GANG_N(LINEAR_AXES, "X", "Y", "Z", AXIS4_STR, AXIS5_STR, AXIS6_STR, AXIS7_STR, AXIS8_STR, AXIS9_STR, AXIS10_STR) "E")) {    /**SG**/
       planner.synchronize();
       if (parser.seen('X')) DISABLE_AXIS_X();
       if (parser.seen('Y')) DISABLE_AXIS_Y();
@@ -83,6 +92,16 @@ void GcodeSuite::M18_M84() {
       #if LINEAR_AXES >= 7    /**SG**/
         if (parser.seen(AXIS7_NAME)) DISABLE_AXIS_M();
       #endif
+      #if LINEAR_AXES >= 8    /**SG**/
+        if (parser.seen(AXIS8_NAME)) DISABLE_AXIS_O();
+      #endif
+      #if LINEAR_AXES >= 9    /**SG**/
+        if (parser.seen(AXIS9_NAME)) DISABLE_AXIS_P();
+      #endif
+      #if LINEAR_AXES >= 10    /**SG**/
+        if (parser.seen(AXIS10_NAME)) DISABLE_AXIS_Q();
+      #endif
+
       if (TERN0(HAS_E_STEPPER_ENABLE, parser.seen('E'))) disable_e_steppers();
     }
     else

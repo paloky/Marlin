@@ -92,6 +92,16 @@ FORCE_INLINE feedRate_t homing_feedrate(const AxisEnum a) {
       #if LINEAR_AXES >= 7    /**SG**/
         case M_AXIS: v = homing_feedrate_mm_m.m; break;
       #endif
+      #if LINEAR_AXES >= 8    /**SG**/
+        case O_AXIS: v = homing_feedrate_mm_m.o; break;
+      #endif
+      #if LINEAR_AXES >= 9    /**SG**/
+        case P_AXIS: v = homing_feedrate_mm_m.p; break;
+      #endif
+      #if LINEAR_AXES >= 10    /**SG**/
+        case Q_AXIS: v = homing_feedrate_mm_m.q; break;
+      #endif
+
       case Z_AXIS:
           default: v = homing_feedrate_mm_m.z;
     }
@@ -135,7 +145,7 @@ inline int8_t pgm_read_any(const int8_t *p) { return TERN(__IMXRT1062__, *p, pgm
 /**SG**/
 #define XYZ_DEFS(T, NAME, OPT) \
   inline T NAME(const AxisEnum axis) { \
-      static const XYZval<T> NAME##_P DEFS_PROGMEM = ARRAY_N(LINEAR_AXES, X_##OPT, Y_##OPT, Z_##OPT, I_##OPT, J_##OPT, K_##OPT, M_##OPT); \
+      static const XYZval<T> NAME##_P DEFS_PROGMEM = ARRAY_N(LINEAR_AXES, X_##OPT, Y_##OPT, Z_##OPT, I_##OPT, J_##OPT, K_##OPT, M_##OPT, O_##OPT, P_##OPT, Q_##OPT); \
     return pgm_read_any(&NAME##_P[axis]); \
   }
 XYZ_DEFS(float, base_min_pos,   MIN_POS);
@@ -210,6 +220,25 @@ inline float home_bump_mm(const AxisEnum axis) {
               TERN_(MIN_SOFTWARE_ENDSTOP_M, amax = max.m);
               break;
           #endif
+          #if LINEAR_AXES >= 8  /**SG**/
+            case O_AXIS:
+              TERN_(MIN_SOFTWARE_ENDSTOP_O, amin = min.o);
+              TERN_(MIN_SOFTWARE_ENDSTOP_O, amax = max.o);
+              break;
+          #endif
+          #if LINEAR_AXES >= 9  /**SG**/
+            case P_AXIS:
+              TERN_(MIN_SOFTWARE_ENDSTOP_P, amin = min.p);
+              TERN_(MIN_SOFTWARE_ENDSTOP_P, amax = max.p);
+              break;
+          #endif
+          #if LINEAR_AXES >= 10  /**SG**/
+            case Q_AXIS:
+              TERN_(MIN_SOFTWARE_ENDSTOP_Q, amin = min.q);
+              TERN_(MIN_SOFTWARE_ENDSTOP_Q, amax = max.q);
+              break;
+          #endif
+
           default: break;
         }
       #endif
@@ -292,7 +321,7 @@ inline void prepare_internal_move_to_destination(const feedRate_t &fr_mm_s=0.0f)
  * Blocking movement and shorthand functions
  */
 void do_blocking_move_to(
-  LIST_N(LINEAR_AXES, const float rx, const float ry, const float rz, const float ri, const float rj, const float rk, const float rm),  /**SG**/
+  LIST_N(LINEAR_AXES, const float rx, const float ry, const float rz, const float ri, const float rj, const float rk, const float rm, const float ro, const float rp, const float rq),  /**SG**/
   const feedRate_t &fr_mm_s=0.0f
 );
 void do_blocking_move_to(const xy_pos_t &raw, const feedRate_t &fr_mm_s=0.0f);
@@ -317,6 +346,18 @@ void do_blocking_move_to_z(const float &rz, const feedRate_t &fr_mm_s=0.0f);
 #if LINEAR_AXES >= 7  /**SG**/
   void do_blocking_move_to_m(const float &rm, const feedRate_t &fr_mm_s=0.0f);
   void do_blocking_move_to_xyzijk_m(const xyze_pos_t &raw, const float &m, const feedRate_t &fr_mm_s=0.0f);
+#endif
+#if LINEAR_AXES >= 8  /**SG**/
+  void do_blocking_move_to_o(const float &ro, const feedRate_t &fr_mm_s=0.0f);
+  void do_blocking_move_to_xyzijkm_o(const xyze_pos_t &raw, const float &o, const feedRate_t &fr_mm_s=0.0f);
+#endif
+#if LINEAR_AXES >= 9  /**SG**/
+  void do_blocking_move_to_p(const float &rp, const feedRate_t &fr_mm_s=0.0f);
+  void do_blocking_move_to_xyzijkmo_p(const xyze_pos_t &raw, const float &p, const feedRate_t &fr_mm_s=0.0f);
+#endif
+#if LINEAR_AXES >= 10  /**SG**/
+  void do_blocking_move_to_q(const float &rq, const feedRate_t &fr_mm_s=0.0f);
+  void do_blocking_move_to_xyzijkmop_q(const xyze_pos_t &raw, const float &q, const feedRate_t &fr_mm_s=0.0f);
 #endif
 
 void do_blocking_move_to_xy(const float &rx, const float &ry, const feedRate_t &fr_mm_s=0.0f);
@@ -427,6 +468,18 @@ FORCE_INLINE void set_all_unhomed()                       { axis_homed = axis_tr
 #if LINEAR_AXES >= 7   /**SG**/
   #define LOGICAL_M_POSITION(POS) NATIVE_TO_LOGICAL(POS, M_AXIS)
   #define RAW_M_POSITION(POS)     LOGICAL_TO_NATIVE(POS, M_AXIS)
+#endif
+#if LINEAR_AXES >= 8   /**SG**/
+  #define LOGICAL_O_POSITION(POS) NATIVE_TO_LOGICAL(POS, O_AXIS)
+  #define RAW_O_POSITION(POS)     LOGICAL_TO_NATIVE(POS, O_AXIS)
+#endif
+#if LINEAR_AXES >= 9   /**SG**/
+  #define LOGICAL_P_POSITION(POS) NATIVE_TO_LOGICAL(POS, P_AXIS)
+  #define RAW_P_POSITION(POS)     LOGICAL_TO_NATIVE(POS, P_AXIS)
+#endif
+#if LINEAR_AXES >= 10   /**SG**/
+  #define LOGICAL_Q_POSITION(POS) NATIVE_TO_LOGICAL(POS, Q_AXIS)
+  #define RAW_Q_POSITION(POS)     LOGICAL_TO_NATIVE(POS, Q_AXIS)
 #endif
 
 /**

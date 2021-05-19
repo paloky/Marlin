@@ -79,18 +79,27 @@ uint8_t GcodeSuite::axis_relative = (
   #if LINEAR_AXES >= 4
     | (ar_init.i ? _BV(REL_I) : 0)
   #endif
-
   #if LINEAR_AXES >= 5
     | (ar_init.j ? _BV(REL_J) : 0)
   #endif
-
   #if LINEAR_AXES >= 6
     | (ar_init.k ? _BV(REL_K) : 0)
   #endif
-
   /**SG**/
   #if LINEAR_AXES >= 7    
     | (ar_init.m ? _BV(REL_M) : 0)
+  #endif
+  /**SG**/
+  #if LINEAR_AXES >= 8    
+    | (ar_init.o ? _BV(REL_O) : 0)
+  #endif
+  /**SG**/
+  #if LINEAR_AXES >= 9    
+    | (ar_init.p ? _BV(REL_P) : 0)
+  #endif
+  /**SG**/
+  #if LINEAR_AXES >= 10    
+    | (ar_init.q ? _BV(REL_Q) : 0)
   #endif
 
   | (ar_init.e ? _BV(REL_E) : 0)
@@ -166,6 +175,15 @@ void GcodeSuite::get_destination_from_command() {
       , false
     #endif
     #if LINEAR_AXES >= 7   /**SG**/
+      , false
+    #endif
+    #if LINEAR_AXES >= 8   /**SG**/
+      , false
+    #endif
+    #if LINEAR_AXES >= 9   /**SG**/
+      , false
+    #endif
+    #if LINEAR_AXES >= 10   /**SG**/
       , false
     #endif
   };

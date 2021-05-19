@@ -136,6 +136,9 @@ extern uint8_t marlin_debug_flags;
 #define _SEP_22(a,b,V...) do{ _SEP_2(a,b); _SEP_20(V); }while(0)
 #define _SEP_23(a,b,V...) do{ _SEP_2(a,b); _SEP_21(V); }while(0)
 #define _SEP_24(a,b,V...) do{ _SEP_2(a,b); _SEP_22(V); }while(0)
+#define _SEP_25(a,b,V...) do{ _SEP_2(a,b); _SEP_23(V); }while(0)
+#define _SEP_26(a,b,V...) do{ _SEP_2(a,b); _SEP_24(V); }while(0)
+#define _SEP_27(a,b,V...) do{ _SEP_2(a,b); _SEP_23(V); }while(0)
 
 #define SERIAL_ECHOPAIR(V...) _SEP_N(NUM_ARGS(V),V)
 
@@ -323,12 +326,12 @@ void serial_spaces(uint8_t count);
 
 void print_bin(const uint16_t val);
 void print_pos(
-  LIST_N(LINEAR_AXES, const float &x, const float &y, const float &z, const float &i, const float &j, const float &k, const float &m), /**SG**/
+  LIST_N(LINEAR_AXES, const float &x, const float &y, const float &z, const float &i, const float &j, const float &k, const float &m, const float &o, const float &p, const float &q), /**SG**/
   PGM_P const prefix=nullptr, PGM_P const suffix=nullptr
 );
 
 inline void print_pos(const xyz_pos_t &xyz, PGM_P const prefix=nullptr, PGM_P const suffix=nullptr) {
-  print_pos(LIST_N(LINEAR_AXES, xyz.x, xyz.y, xyz.z, xyz.i, xyz.j, xyz.k, xyz.m), prefix, suffix);  /**SG**/
+  print_pos(LIST_N(LINEAR_AXES, xyz.x, xyz.y, xyz.z, xyz.i, xyz.j, xyz.k, xyz.m, xyz.o, xyz.p, xyz.q), prefix, suffix);  /**SG**/
 }
 
 #define SERIAL_POS(SUFFIX,VAR) do { print_pos(VAR, PSTR("  " STRINGIFY(VAR) "="), PSTR(" : " SUFFIX "\n")); }while(0)

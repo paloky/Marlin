@@ -51,10 +51,19 @@
   #if LINEAR_AXES >= 7    /**SG**/
     #define M91x_USE_M (M91x_USE(M))
   #endif
+  #if LINEAR_AXES >= 8    /**SG**/
+    #define M91x_USE_O (M91x_USE(O))
+  #endif
+  #if LINEAR_AXES >= 9    /**SG**/
+    #define M91x_USE_P (M91x_USE(P))
+  #endif
+  #if LINEAR_AXES >= 10    /**SG**/
+    #define M91x_USE_Q (M91x_USE(Q))
+  #endif
 
   #define M91x_SOME_E (M91x_USE_E(0) || M91x_USE_E(1) || M91x_USE_E(2) || M91x_USE_E(3) || M91x_USE_E(4) || M91x_USE_E(5) || M91x_USE_E(6) || M91x_USE_E(7))
 
-  #if !M91x_SOME_X && !M91x_SOME_Y && !M91x_SOME_Z && !M91x_USE_I && !M91x_USE_J && !M91x_USE_K && !M91x_USE_M && !M91x_SOME_E    /**SG**/
+  #if !M91x_SOME_X && !M91x_SOME_Y && !M91x_SOME_Z && !M91x_USE_I && !M91x_USE_J && !M91x_USE_K && !M91x_USE_M && !M91x_USE_O && !M91x_USE_P && !M91x_USE_Q && !M91x_SOME_E    /**SG**/
     #error "MONITOR_DRIVER_STATUS requires at least one TMC2130, 2160, 2208, 2209, 2660, 5130, or 5160."
   #endif
 
@@ -96,9 +105,17 @@
     #if M91x_USE_K
       tmc_report_otpw(stepperK);
     #endif
-
     #if M91x_USE_M    /**SG**/
       tmc_report_otpw(stepperM);
+    #endif
+    #if M91x_USE_O    /**SG**/
+      tmc_report_otpw(stepperO);
+    #endif
+    #if M91x_USE_P    /**SG**/
+      tmc_report_otpw(stepperP);
+    #endif
+    #if M91x_USE_Q    /**SG**/
+      tmc_report_otpw(stepperQ);
     #endif
 
     #if M91x_USE_E(0)
@@ -173,11 +190,25 @@
     #else
       constexpr bool hasK = false;
     #endif
-
     #if M91x_USE_M    /**SG**/
       const bool hasM = parser.seen(axis_codes.m);
     #else
       constexpr bool hasM = false;
+    #endif
+    #if M91x_USE_O    /**SG**/
+      const bool hasO = parser.seen(axis_codes.o);
+    #else
+      constexpr bool hasO = false;
+    #endif
+    #if M91x_USE_P    /**SG**/
+      const bool hasP = parser.seen(axis_codes.p);
+    #else
+      constexpr bool hasP = false;
+    #endif
+    #if M91x_USE_Q    /**SG**/
+      const bool hasQ = parser.seen(axis_codes.q);
+    #else
+      constexpr bool hasQ = false;
     #endif
 
     #if M91x_SOME_E
@@ -186,7 +217,7 @@
       constexpr bool hasE = false;
     #endif
 
-    const bool hasNone = !hasE GANG_N(LINEAR_AXES, && !hasX, && !hasY, && !hasZ, && !hasI, && !hasJ, && !hasK, && !hasM);  /**SG**/
+    const bool hasNone = !hasE GANG_N(LINEAR_AXES, && !hasX, && !hasY, && !hasZ, && !hasI, && !hasJ, && !hasK, && !hasM, && !hasO, && !hasP, && !hasQ);  /**SG**/
 
     #if M91x_SOME_X
       const int8_t xval = int8_t(parser.byteval(axis_codes.x, 0xFF));
@@ -236,10 +267,21 @@
       const int8_t kval = int8_t(parser.byteval(axis_codes.k, 0xFF));
       if (hasNone || kval == 1 || (hasK && kval < 0)) tmc_clear_otpw(stepperK);
     #endif
-
     #if M91x_USE_M    /**SG**/
       const int8_t mval = int8_t(parser.byteval(axis_codes.m, 0xFF));
-      if (hasNone || mval == 1 || (hasm && mval < 0)) tmc_clear_otpw(stepperM);
+      if (hasNone || mval == 1 || (hasM && mval < 0)) tmc_clear_otpw(stepperM);
+    #endif
+    #if M91x_USE_O    /**SG**/
+      const int8_t oval = int8_t(parser.byteval(axis_codes.o, 0xFF));
+      if (hasNone || oval == 1 || (hasO && oval < 0)) tmc_clear_otpw(stepperO);
+    #endif
+    #if M91x_USE_P    /**SG**/
+      const int8_t pval = int8_t(parser.byteval(axis_codes.p, 0xFF));
+      if (hasNone || pval == 1 || (hasP && pval < 0)) tmc_clear_otpw(stepperP);
+    #endif
+    #if M91x_USE_Q    /**SG**/
+      const int8_t qval = int8_t(parser.byteval(axis_codes.q, 0xFF));
+      if (hasNone || qval == 1 || (hasQ && qval < 0)) tmc_clear_otpw(stepperQ);
     #endif
 
     #if M91x_SOME_E
@@ -285,7 +327,7 @@
 
     bool report = true;
     #if AXIS_IS_TMC(X) || AXIS_IS_TMC(X2) || AXIS_IS_TMC(Y) || AXIS_IS_TMC(Y2) || AXIS_IS_TMC(Z) || AXIS_IS_TMC(Z2) || AXIS_IS_TMC(Z3) || AXIS_IS_TMC(Z4) \
-    || AXIS_IS_TMC(I) || AXIS_IS_TMC(J) || AXIS_IS_TMC(K) || AXIS_IS_TMC(M)    /**SG**/
+    || AXIS_IS_TMC(I) || AXIS_IS_TMC(J) || AXIS_IS_TMC(K) || AXIS_IS_TMC(M) || AXIS_IS_TMC(O) || AXIS_IS_TMC(P) || AXIS_IS_TMC(Q)    /**SG**/
       const uint8_t index = parser.byteval('I');
     #endif
     LOOP_NUM_AXIS(i) if (int32_t value = parser.longval(axis_codes[i])) {
@@ -319,6 +361,15 @@
         #endif
         #if AXIS_HAS_STEALTHCHOP(M)   /**SG**/
           case M_AXIS: TMC_SET_PWMTHRS(M,M); break;
+        #endif
+        #if AXIS_HAS_STEALTHCHOP(O)   /**SG**/
+          case O_AXIS: TMC_SET_PWMTHRS(O,O); break;
+        #endif
+        #if AXIS_HAS_STEALTHCHOP(P)   /**SG**/
+          case P_AXIS: TMC_SET_PWMTHRS(P,P); break;
+        #endif
+        #if AXIS_HAS_STEALTHCHOP(Q)   /**SG**/
+          case Q_AXIS: TMC_SET_PWMTHRS(Q,Q); break;
         #endif
 
         case Z_AXIS:
@@ -407,6 +458,15 @@
       #endif
       #if AXIS_HAS_STEALTHCHOP(M)   /**SG**/
         TMC_SAY_PWMTHRS(M,M);
+      #endif
+      #if AXIS_HAS_STEALTHCHOP(O)   /**SG**/
+        TMC_SAY_PWMTHRS(O,O);
+      #endif
+      #if AXIS_HAS_STEALTHCHOP(P)   /**SG**/
+        TMC_SAY_PWMTHRS(P,P);
+      #endif
+      #if AXIS_HAS_STEALTHCHOP(Q)   /**SG**/
+        TMC_SAY_PWMTHRS(Q,Q);
       #endif
 
       #if E_STEPPERS && AXIS_HAS_STEALTHCHOP(E0)
@@ -497,6 +557,15 @@
         #if M_SENSORLESS && AXIS_HAS_STALLGUARD(M)   /**SG**/
           case M_AXIS: stepperM.homing_threshold(value); break;
         #endif
+        #if O_SENSORLESS && AXIS_HAS_STALLGUARD(O)   /**SG**/
+          case O_AXIS: stepperO.homing_threshold(value); break;
+        #endif
+        #if P_SENSORLESS && AXIS_HAS_STALLGUARD(P)   /**SG**/
+          case P_AXIS: stepperP.homing_threshold(value); break;
+        #endif
+        #if Q_SENSORLESS && AXIS_HAS_STALLGUARD(Q)   /**SG**/
+          case Q_AXIS: stepperQ.homing_threshold(value); break;
+        #endif
       }
     }
 
@@ -542,6 +611,15 @@
       #endif
       #if M_SENSORLESS && AXIS_HAS_STALLGUARD(M)   /**SG**/
         tmc_print_sgt(stepperM);
+      #endif
+      #if O_SENSORLESS && AXIS_HAS_STALLGUARD(O)   /**SG**/
+        tmc_print_sgt(stepperO);
+      #endif
+      #if P_SENSORLESS && AXIS_HAS_STALLGUARD(P)   /**SG**/
+        tmc_print_sgt(stepperP);
+      #endif
+      #if Q_SENSORLESS && AXIS_HAS_STALLGUARD(Q)   /**SG**/
+        tmc_print_sgt(stepperQ);
       #endif
     }
   }

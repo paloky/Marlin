@@ -319,7 +319,10 @@ void GcodeSuite::G28() {
                  needI = _UNSAFE(I),
                  needJ = _UNSAFE(J),
                  needK = _UNSAFE(K),
-                 needM = _UNSAFE(M)   /**SG**/
+                 needM = _UNSAFE(M),   /**SG**/
+                 needO = _UNSAFE(O),   /**SG**/
+                 needP = _UNSAFE(P),   /**SG**/
+                 needQ = _UNSAFE(Q)   /**SG**/
                ),
                // Home each axis if needed or flagged
                homeX = needX || parser.seen('X'),
@@ -336,6 +339,16 @@ void GcodeSuite::G28() {
                #if LINEAR_AXES >= 7   /**SG**/
                  homeM = needM || parser.seen(AXIS7_NAME),
                #endif
+               #if LINEAR_AXES >= 8   /**SG**/
+                 homeO = needO || parser.seen(AXIS8_NAME),
+               #endif
+               #if LINEAR_AXES >= 9   /**SG**/
+                 homeP = needP || parser.seen(AXIS9_NAME),
+               #endif
+               #if LINEAR_AXES >= 10   /**SG**/
+                 homeQ = needQ || parser.seen(AXIS10_NAME),
+               #endif
+
                // Home-all if all or none are flagged
                home_all = true GANG_N(LINEAR_AXES,
                  && homeX == homeX,
@@ -344,7 +357,10 @@ void GcodeSuite::G28() {
                  && homeX == homeI,
                  && homeX == homeJ,
                  && homeX == homeK,
-                 && homeX == homeM  /**SG**/
+                 && homeX == homeM,  /**SG**/
+                 && homeX == homeO,  /**SG**/
+                 && homeX == homeP,  /**SG**/
+                 && homeX == homeQ  /**SG**/
                ),
                LIST_N(LINEAR_AXES,
                  doX = home_all || homeX,
@@ -353,7 +369,10 @@ void GcodeSuite::G28() {
                  doI = home_all || homeI,
                  doJ = home_all || homeJ,
                  doK = home_all || homeK,
-                 doM = home_all || homeM    /**SG**/
+                 doM = home_all || homeM,    /**SG**/
+                 doO = home_all || homeO,    /**SG**/
+                 doP = home_all || homeP,    /**SG**/
+                 doQ = home_all || homeQ    /**SG**/
                );
 
     UNUSED(needZ);
@@ -380,6 +399,15 @@ void GcodeSuite::G28() {
         #endif
         #if LINEAR_AXES >= 7    /**SG**/
           || doM
+        #endif
+        #if LINEAR_AXES >= 8    /**SG**/
+          || doO
+        #endif
+        #if LINEAR_AXES >= 9    /**SG**/
+          || doP
+        #endif
+        #if LINEAR_AXES >= 10    /**SG**/
+          || doQ
         #endif
         || TERN0(Z_SAFE_HOMING, doZ)
       )
@@ -456,6 +484,15 @@ void GcodeSuite::G28() {
     #endif
     #if LINEAR_AXES >= 7    /**SG**/
       if (doM) homeaxis(M_AXIS);
+    #endif
+    #if LINEAR_AXES >= 8    /**SG**/
+      if (doO) homeaxis(O_AXIS);
+    #endif
+    #if LINEAR_AXES >= 9    /**SG**/
+      if (doP) homeaxis(P_AXIS);
+    #endif
+    #if LINEAR_AXES >= 10    /**SG**/
+      if (doQ) homeaxis(Q_AXIS);
     #endif
 
     sync_plan_position();
@@ -540,6 +577,15 @@ void GcodeSuite::G28() {
     #endif
     #if HAS_CURRENT_HOME(M)   /**SG**/
       stepperM.rms_current(tmc_save_current_M);
+    #endif
+    #if HAS_CURRENT_HOME(O)   /**SG**/
+      stepperO.rms_current(tmc_save_current_O);
+    #endif
+    #if HAS_CURRENT_HOME(P)   /**SG**/
+      stepperP.rms_current(tmc_save_current_P);
+    #endif
+    #if HAS_CURRENT_HOME(Q)   /**SG**/
+      stepperQ.rms_current(tmc_save_current_Q);
     #endif
   #endif // HAS_HOMING_CURRENT
 

@@ -36,11 +36,13 @@
 #define _XMIN_   100
 #define _YMIN_   200
 #define _ZMIN_   300
-#define _DMIN_   400
 #define _IMIN_   400
 #define _JMIN_   500
 #define _KMIN_   600
 #define _MMIN_   700   /**SG**/
+#define _OMIN_   800   /**SG**/
+#define _PMIN_   900   /**SG**/
+#define _QMIN_   1000   /**SG**/
 
 #define _XMAX_   101
 #define _YMAX_   201
@@ -49,6 +51,9 @@
 #define _JMAX_   501
 #define _KMAX_   601
 #define _MMAX_   701   /**SG**/
+#define _OMAX_   801   /**SG**/
+#define _PMAX_   901   /**SG**/
+#define _QMAX_   1001   /**SG**/
 
 #define _XDIAG_  102
 #define _YDIAG_  202
@@ -57,6 +62,9 @@
 #define _JDIAG_  502
 #define _KDIAG_  602
 #define _MDIAG_  702   /**SG**/
+#define _ODIAG_  802   /**SG**/
+#define _PDIAG_  902   /**SG**/
+#define _QDIAG_  1002   /**SG**/
 
 #define _E0DIAG_ 400
 #define _E1DIAG_ 401
@@ -180,6 +188,7 @@
 #define _DO_10(W,C,A,V...) (_##W##_1(A) C _DO_9(W,C,V))
 #define _DO_11(W,C,A,V...) (_##W##_1(A) C _DO_10(W,C,V))
 #define _DO_12(W,C,A,V...) (_##W##_1(A) C _DO_11(W,C,V))
+#define _DO_13(W,C,A,V...) (_##W##_1(A) C _DO_12(W,C,V))
 #define __DO_N(W,C,N,V...) _DO_##N(W,C,V)
 #define _DO_N(W,C,N,V...)  __DO_N(W,C,N,V)
 #define DO(W,C,V...)       (_DO_N(W,C,NUM_ARGS(V),V))
@@ -242,6 +251,8 @@
     memcpy(&a[0],&b[0],_MIN(sizeof(a),sizeof(b))); \
   }while(0)
 
+#define CODE_11( A,B,C,D,E,F,G,H,I,J,K,...) do{ A; B; C; D; E; F; G; H; I; J; K; }while(0)   /**SG**/
+#define CODE_10( A,B,C,D,E,F,G,H,I,J,...) do{ A; B; C; D; E; F; G; H; I; J; }while(0)   /**SG**/
 #define CODE_9( A,B,C,D,E,F,G,H,I,...) do{ A; B; C; D; E; F; G; H; I; }while(0)
 #define CODE_8( A,B,C,D,E,F,G,H,...) do{ A; B; C; D; E; F; G; H; }while(0)
 #define CODE_7( A,B,C,D,E,F,G,...) do{ A; B; C; D; E; F; G; }while(0)
@@ -254,6 +265,9 @@
 #define _CODE_N(N,V...) CODE_##N(V)
 #define CODE_N(N,V...) _CODE_N(N,V)
 
+
+#define GANG_11( A,B,C,D,E,F,G,H,I,J,K,...) A B C D E F G H I J K   /**SG**/
+#define GANG_10( A,B,C,D,E,F,G,H,I,J,...) A B C D E F G H I J   /**SG**/
 #define GANG_9( A,B,C,D,E,F,G,H,I,...) A B C D E F G H I
 #define GANG_8( A,B,C,D,E,F,G,H,...) A B C D E F G H
 #define GANG_7( A,B,C,D,E,F,G,...) A B C D E F G
@@ -266,7 +280,21 @@
 #define _GANG_N(N,V...) GANG_##N(V)
 #define GANG_N(N,V...) _GANG_N(N,V)
 
+
 // Macros for initializing arrays
+#define LIST_29(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Z2,Z3,Z4,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Z2,Z3,Z4    /**SG**/
+#define LIST_28(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Z2,Z3,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Z2,Z3    /**SG**/
+#define LIST_27(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Z2,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,Z2    /**SG**/
+#define LIST_26(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,Z    /**SG**/
+#define LIST_25(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,Y    /**SG**/
+#define LIST_24(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,X    /**SG**/
+#define LIST_23(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,W    /**SG**/
+#define LIST_22(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,V    /**SG**/
+#define LIST_21(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,U    /**SG**/
+#define LIST_20(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,T    /**SG**/
+#define LIST_19(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,S        /**SG**/
+#define LIST_18(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,R            
+#define LIST_17(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,Q
 #define LIST_16(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,P
 #define LIST_15(A,B,C,D,E,F,G,H,I,J,K,L,M,N,O,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N,O
 #define LIST_14(A,B,C,D,E,F,G,H,I,J,K,L,M,N,...) A,B,C,D,E,F,G,H,I,J,K,L,M,N

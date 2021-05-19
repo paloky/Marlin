@@ -83,6 +83,16 @@ void menu_backlash();
     #if LINEAR_AXES >= 7    /**SG**/
       EDIT_DAC_PERCENT(M);
     #endif
+    #if LINEAR_AXES >= 8   /**SG**/
+      EDIT_DAC_PERCENT(O);
+    #endif
+    #if LINEAR_AXES >= 9    /**SG**/
+      EDIT_DAC_PERCENT(P);
+    #endif
+    #if LINEAR_AXES >= 10    /**SG**/
+      EDIT_DAC_PERCENT(Q);
+    #endif
+
     EDIT_DAC_PERCENT(E);
     ACTION_ITEM(MSG_DAC_EEPROM_WRITE, stepper_dac.commit_eeprom);
     END_MENU();
@@ -388,6 +398,15 @@ void menu_backlash();
     #if LINEAR_AXES >= 7    /**SG**/
       EDIT_VMAX(M);
     #endif
+    #if LINEAR_AXES >= 8    /**SG**/
+      EDIT_VMAX(O);
+    #endif
+    #if LINEAR_AXES >= 9    /**SG**/
+      EDIT_VMAX(P);
+    #endif
+    #if LINEAR_AXES >= 10    /**SG**/
+      EDIT_VMAX(Q);
+    #endif
 
     #if E_STEPPERS
       EDIT_ITEM_FAST(float3, MSG_VMAX_E, &planner.settings.max_feedrate_mm_s[E_AXIS_N(active_extruder)], 1, max_fr_edit_scaled.e);
@@ -454,6 +473,16 @@ void menu_backlash();
     #if LINEAR_AXES >= 7    /**SG**/
       EDIT_AMAX(M, 10);
     #endif
+    #if LINEAR_AXES >= 8    /**SG**/
+      EDIT_AMAX(O, 10);
+    #endif
+    #if LINEAR_AXES >= 9    /**SG**/
+      EDIT_AMAX(P, 10);
+    #endif
+    #if LINEAR_AXES >= 10    /**SG**/
+      EDIT_AMAX(Q, 10);
+    #endif
+
 
     #if ENABLED(DISTINCT_E_FACTORS)
       EDIT_ITEM_FAST(long5_25, MSG_AMAX_E, &planner.settings.max_acceleration_mm_per_s2[E_AXIS_N(active_extruder)], 100, max_accel_edit_scaled.e, []{ planner.reset_acceleration_rates(); });
@@ -515,6 +544,15 @@ void menu_backlash();
       #if LINEAR_AXES >= 7    /**SG**/
         EDIT_JERK(M);
       #endif
+      #if LINEAR_AXES >= 8    /**SG**/
+        EDIT_JERK(O);
+      #endif
+      #if LINEAR_AXES >= 9    /**SG**/
+        EDIT_JERK(P);
+      #endif
+      #if LINEAR_AXES >= 10    /**SG**/
+        EDIT_JERK(Q);
+      #endif
 
       #if HAS_CLASSIC_E_JERK
         EDIT_ITEM_FAST(float52sign, MSG_VE_JERK, &planner.max_jerk.e, 0.1f, max_jerk_edit.e);
@@ -566,6 +604,15 @@ void menu_advanced_steps_per_mm() {
   #endif
   #if LINEAR_AXES >= 7  /**SG**/
     EDIT_QSTEPS(M);
+  #endif
+  #if LINEAR_AXES >= 8  /**SG**/
+    EDIT_QSTEPS(O);
+  #endif
+  #if LINEAR_AXES >= 9  /**SG**/
+    EDIT_QSTEPS(P);
+  #endif
+  #if LINEAR_AXES >= 10  /**SG**/
+    EDIT_QSTEPS(Q);
   #endif
 
   #if ENABLED(DISTINCT_E_FACTORS)
